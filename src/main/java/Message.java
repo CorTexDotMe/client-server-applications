@@ -11,4 +11,16 @@ public class Message {
         message = new byte[wLen - Integer.BYTES * 2];
         buffer.get(message, Integer.BYTES * 2, wLen);
     }
+
+    public int getcType() {
+        return cType;
+    }
+
+    public int getbUserId() {
+        return bUserId;
+    }
+
+    public byte[] getMessage() {
+        return message;
+    }
 }

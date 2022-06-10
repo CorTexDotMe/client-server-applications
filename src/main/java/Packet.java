@@ -1,7 +1,7 @@
 import java.nio.ByteBuffer;
 
 public class Packet {
-    private byte bMagic = 0x13;
+    public static final byte bMagic = 0x13;
     private byte bSrc;
     private long bPktId;
     private int wLen;
