@@ -1,55 +1,62 @@
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PacketTest {
 
-    private final Packet packetSent =
-            new Packet((byte) 1, 15, new Message(100, 10, "Ukulele".getBytes()));;
-    private final Packet packetReceived = new Packet(this.packetSent.getPacket());
+    private static Packet packetSent;
+    private static Packet packetReceived;
+    
+    @BeforeAll
+    static void initialize() {
+        packetSent = new Packet((byte) 1, 15, new Message(100, 10, "Ukulele".getBytes()));
+
+        packetReceived = new Packet(packetSent.getPacket());
+    }
 
     @Test
     void getPacket() {
-        assertEquals(this.packetSent.getPacket(), this.packetReceived.getPacket());
+        assertEquals(packetSent.getPacket(), packetReceived.getPacket());
     }
+
     @Test
     void getBSrc() {
-        assertEquals(this.packetSent.getBSrc(), this.packetReceived.getBSrc());
+        assertEquals(packetSent.getBSrc(), packetReceived.getBSrc());
     }
 
     @Test
     void getBPktId() {
-        assertEquals(this.packetSent.getBPktId(), this.packetReceived.getBPktId());
+        assertEquals(packetSent.getBPktId(), packetReceived.getBPktId());
     }
 
     @Test
     void getWLen() {
-        assertEquals(this.packetSent.getWLen(), this.packetReceived.getWLen());
+        assertEquals(packetSent.getWLen(), packetReceived.getWLen());
     }
 
     @Test
     void getWCrc16_first() {
-        assertEquals(this.packetSent.getWCrc16_first(), this.packetReceived.getWCrc16_first());
+        assertEquals(packetSent.getWCrc16_first(), packetReceived.getWCrc16_first());
     }
 
     @Test
     void getBMsgCType() {
-        assertEquals(this.packetSent.getBMsg().getcType(), this.packetReceived.getBMsg().getcType());
+        assertEquals(packetSent.getBMsg().getCType(), packetReceived.getBMsg().getCType());
     }
 
     @Test
     void getBMsgBUsrId() {
-        assertEquals(this.packetSent.getBMsg().getbUserId(), this.packetReceived.getBMsg().getbUserId());
+        assertEquals(packetSent.getBMsg().getBUserId(), packetReceived.getBMsg().getBUserId());
     }
 
     @Test
     void getBMsgMessage() {
-        assertArrayEquals(this.packetSent.getBMsg().getMessage(), this.packetReceived.getBMsg().getMessage());
+        assertArrayEquals(packetSent.getBMsg().getMessage(), packetReceived.getBMsg().getMessage());
     }
 
     @Test
     void getWCrc16_second() {
-        assertEquals(this.packetSent.getWCrc16_second(), this.packetReceived.getWCrc16_second());
+        assertEquals(packetSent.getWCrc16_second(), packetReceived.getWCrc16_second());
     }
 }
