@@ -17,11 +17,17 @@ public class Message {
     private int bUserId;
     private byte[] message;
 
-    public Message(ByteBuffer buffer, int wLen) {
+    public Message(ByteBuffer buffer) {
         cType = buffer.getInt();
         bUserId = buffer.getInt();
-        message = new byte[wLen - Integer.BYTES * 2];
-        buffer.get(message, Integer.BYTES * 2, wLen);
+        message = new byte[buffer.remaining()];
+        buffer.get(message);
+    }
+
+    public Message(int cType, int bUserId, byte[] message) {
+        this.cType = cType;
+        this.bUserId = bUserId;
+        this.message = message;
     }
 
     public int getcType() {
