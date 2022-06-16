@@ -115,16 +115,18 @@ public class Packet {
         if (this.wCrc16_first != CRC16.getCRC16(bytesForFirstChecksum))
             throw new IllegalArgumentException("Wrong first checksum");
 
-        //Decrypt message
+        //Decrypt message - read
         byte[] encryptedMessage = new byte[wLen];
         buffer.get(encryptedMessage);
-        byte[] decryptedMessage = cipher.decryptData(encryptedMessage);
-        this.bMsg = new Message(ByteBuffer.wrap(decryptedMessage));
 
         //Test second checksum
         this.wCrc16_second = buffer.getShort();
         if (this.wCrc16_second != CRC16.getCRC16(encryptedMessage))
             throw new IllegalArgumentException("Wrong second checksum");
+
+        //Decrypt message - decrypt, save
+        byte[] decryptedMessage = cipher.decryptData(encryptedMessage);
+        this.bMsg = new Message(ByteBuffer.wrap(decryptedMessage));
     }
 
     public byte[] getPacket() {
