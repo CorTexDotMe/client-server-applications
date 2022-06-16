@@ -2,8 +2,8 @@ package tictak;
 
 public class Worker extends Thread {
 
-    private int id;
-    private Data data;
+    private final int id;
+    private final Data data;
 
     public Worker(int id, Data d) {
         this.id = id;
@@ -21,9 +21,15 @@ public class Worker extends Thread {
                         data.wait();
                     }
 
-                    if (id == 1) data.Tic();
-                    else data.Tak();
-                    data.notify();
+                    if (id == 1) {
+                        data.Tic();
+                    } else if (id == 2) {
+                        data.Tak();
+                    } else {
+                        data.Toy();
+                    }
+
+                    data.notifyAll();
                 }
 
             }
