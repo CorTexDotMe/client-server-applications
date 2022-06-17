@@ -16,7 +16,7 @@ import java.nio.ByteBuffer;
  * 02	    8	    bPktId	    Номер повідомлення. Номер постійно збільшується. В форматі big-endian
  * 10	    4	    wLen	    Довжина пакету даних big-endian
  * 14	    2	    wCrc16	    CRC16 байтів (00-13) big-endian
- * 16	    wLen	bMsq	    com.ukma.nechyporchuk.core.Message - корисне повідомлення
+ * 16	    wLen	bMsq	    Message - корисне повідомлення
  * 16+wLen	2	    wCrc16	    CRC16 байтів (16 до 16+wLen-1) big-endian
  *
  * @author Danylo Nechyporchuk
@@ -41,7 +41,7 @@ public class Packet {
      * Take necessary data as parameters.
      * Result is stored in field [packet].
      * <p>
-     * com.ukma.nechyporchuk.core.Message is encrypted with AES-GCM algorithm.
+     * Message is encrypted with AES-GCM algorithm.
      *
      * @param bSrc   unique client id
      * @param bPktId packet id. Will be incremented
@@ -87,11 +87,11 @@ public class Packet {
 
     /**
      * Constructor is used after receiving packet.
-     * com.ukma.nechyporchuk.core.Packet is technically a byte array.
+     * Packet is technically a byte array.
      * <p>
-     * com.ukma.nechyporchuk.core.Packet must start with bMagic byte(13h).
+     * Packet must start with bMagic byte(13h).
      * Checksums(CRC16) are tested.
-     * com.ukma.nechyporchuk.core.Message is decrypted with AES-GCM algorithm.
+     * Message is decrypted with AES-GCM algorithm.
      *
      * @param bytes packet with appropriate data
      * @throws IllegalArgumentException packet doesn't start with magic byte(13h).
