@@ -1,4 +1,4 @@
-package helpers;
+package com.ukma.nechyporchuk.helpers;
 
 /**
  *  Compilation:  javac CRC16.java
