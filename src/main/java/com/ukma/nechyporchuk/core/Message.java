@@ -1,3 +1,5 @@
+package com.ukma.nechyporchuk.core;
+
 import java.nio.ByteBuffer;
 
 /**

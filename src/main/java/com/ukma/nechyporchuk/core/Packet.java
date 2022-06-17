@@ -1,5 +1,7 @@
-import helpers.CRC16;
-import helpers.PacketCipher;
+package com.ukma.nechyporchuk.core;
+
+import com.ukma.nechyporchuk.helpers.CRC16;
+import com.ukma.nechyporchuk.security.PacketCipher;
 
 import java.nio.ByteBuffer;
 
@@ -14,15 +16,15 @@ import java.nio.ByteBuffer;
  * 02	    8	    bPktId	    Номер повідомлення. Номер постійно збільшується. В форматі big-endian
  * 10	    4	    wLen	    Довжина пакету даних big-endian
  * 14	    2	    wCrc16	    CRC16 байтів (00-13) big-endian
- * 16	    wLen	bMsq	    Message - корисне повідомлення
+ * 16	    wLen	bMsq	    com.ukma.nechyporchuk.core.Message - корисне повідомлення
  * 16+wLen	2	    wCrc16	    CRC16 байтів (16 до 16+wLen-1) big-endian
  *
  * @author Danylo Nechyporchuk
  */
 public class Packet {
+    public static final int PACKET_LENGTH_WITHOUT_MESSAGE = 18;
     private static final int BYTES_AMOUNT_FOR_FIRST_CHECKSUM = 14;
-    private static final int PACKET_LENGTH_WITHOUT_MESSAGE = 18;
-    private static final byte bMagic = 0x13;
+    public static final byte bMagic = 0x13;
 
     private byte bSrc;
     private long bPktId;
@@ -39,7 +41,7 @@ public class Packet {
      * Take necessary data as parameters.
      * Result is stored in field [packet].
      * <p>
-     * Message is encrypted with AES-GCM algorithm.
+     * com.ukma.nechyporchuk.core.Message is encrypted with AES-GCM algorithm.
      *
      * @param bSrc   unique client id
      * @param bPktId packet id. Will be incremented
@@ -85,11 +87,11 @@ public class Packet {
 
     /**
      * Constructor is used after receiving packet.
-     * Packet is technically a byte array.
+     * com.ukma.nechyporchuk.core.Packet is technically a byte array.
      * <p>
-     * Packet must start with bMagic byte(13h).
+     * com.ukma.nechyporchuk.core.Packet must start with bMagic byte(13h).
      * Checksums(CRC16) are tested.
-     * Message is decrypted with AES-GCM algorithm.
+     * com.ukma.nechyporchuk.core.Message is decrypted with AES-GCM algorithm.
      *
      * @param bytes packet with appropriate data
      * @throws IllegalArgumentException packet doesn't start with magic byte(13h).

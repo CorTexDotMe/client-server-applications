@@ -1,4 +1,4 @@
-package helpers;
+package com.ukma.nechyporchuk.security;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

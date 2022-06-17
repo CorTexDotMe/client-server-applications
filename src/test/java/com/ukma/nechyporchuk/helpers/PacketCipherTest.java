@@ -1,10 +1,7 @@
-package helpers;
+package com.ukma.nechyporchuk.helpers;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import com.ukma.nechyporchuk.security.PacketCipher;
 import org.junit.jupiter.api.Test;
-
-import javax.crypto.Cipher;
 
 import java.util.Arrays;
 
