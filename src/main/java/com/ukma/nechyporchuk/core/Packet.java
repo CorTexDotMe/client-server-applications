@@ -1,6 +1,8 @@
 package com.ukma.nechyporchuk.core;
 
 import com.ukma.nechyporchuk.helpers.CRC16;
+import com.ukma.nechyporchuk.security.Decryptor;
+import com.ukma.nechyporchuk.security.Encryptor;
 import com.ukma.nechyporchuk.security.PacketCipher;
 
 import java.nio.ByteBuffer;
@@ -34,7 +36,7 @@ public class Packet {
     private short wCrc16_second;
     private byte[] packet;
 
-    private static final PacketCipher cipher = new PacketCipher();
+//    private static final PacketCipher cipher = new PacketCipher();
 
     /**
      * Constructor is used to create packet before sending.
@@ -53,7 +55,7 @@ public class Packet {
         messageBuffer.putInt(bMsg.getCType());
         messageBuffer.putInt(bMsg.getBUserId());
         messageBuffer.put(bMsg.getMessage());
-        byte[] encryptedMessage = cipher.encryptData(messageBuffer.array());
+        byte[] encryptedMessage = Encryptor.encrypt(messageBuffer.array());
 
         //Initialize variables
         this.bSrc = bSrc;
@@ -127,7 +129,7 @@ public class Packet {
             throw new IllegalArgumentException("Wrong second checksum");
 
         //Decrypt message - decrypt, save
-        byte[] decryptedMessage = cipher.decryptData(encryptedMessage);
+        byte[] decryptedMessage = Decryptor.decrypt(encryptedMessage);
         this.bMsg = new Message(ByteBuffer.wrap(decryptedMessage));
     }
 

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PacketCipherTest {
 
-    private final PacketCipher cipher = new PacketCipher();
+    private final PacketCipher cipher = PacketCipher.getInstance();
 
     @Test
     void encryptData() {

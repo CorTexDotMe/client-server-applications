@@ -22,6 +22,7 @@ import java.security.spec.KeySpec;
  */
 public class PacketCipher {
 
+    private static PacketCipher INSTANCE;
     private Cipher cipher;
     private SecretKey secretKey;
     private SecureRandom secureRandom;
@@ -34,7 +35,7 @@ public class PacketCipher {
      * 2. Secret key using password and initialization vector
      * 3. Cipher with appropriate algorithm(AES/GCM/NoPadding).
      */
-    public PacketCipher() {
+    private PacketCipher() {
         try {
             //Create initialization vector
             secureRandom = new SecureRandom();
@@ -49,6 +50,13 @@ public class PacketCipher {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static PacketCipher getInstance() {
+        if (INSTANCE == null)
+            INSTANCE = new PacketCipher();
+
+        return INSTANCE;
     }
 
     /**
