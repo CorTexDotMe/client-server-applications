@@ -2,11 +2,17 @@ package com.ukma.nechyporchuk.core;
 
 import com.ukma.nechyporchuk.network.fake.FakeReceiver;
 import com.ukma.nechyporchuk.network.fake.FakeSender;
-import com.ukma.nechyporchuk.security.PacketCipher;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * Controller that has ThreadPool to process different packets using multiple threads
+ * Use cached thread pool, so it can create a lot of threads.
+ * Saved as Singleton.
+ * <p>
+ * Use shutdown() to stop all threads.
+ */
 public class Controller {
     private static Controller INSTANCE;
     private final ThreadPoolExecutor threadPool;
@@ -25,15 +31,19 @@ public class Controller {
     }
 
     public void workWithPacket(byte[] packet) {
-        threadPool.execute(() -> {
-            processPacket(packet);
-        });
+        threadPool.execute(() -> processPacket(packet));
     }
 
     public void shutdown() {
         threadPool.shutdown();
     }
 
+    /**
+     * To process packet it needs to be decrypted and processed.
+     * Then response is created and sent via Sender
+     *
+     * @param packet byte array with all information
+     */
     private void processPacket(byte[] packet) {
         // Decryption
         Packet decryptedPacket = new Packet(packet);

@@ -4,6 +4,11 @@ import com.ukma.nechyporchuk.core.CommandAnalyser;
 import com.ukma.nechyporchuk.core.Message;
 
 
+/**
+ * Processor that can create response based on different types of commands.
+ * Types are determined in CommandAnalyser
+ *
+ */
 public class Processor {
     public Message process(Message message) {
         byte[] response;
