@@ -1,6 +1,7 @@
 package com.ukma.nechyporchuk.network.fake;
 
-import com.ukma.nechyporchuk.CommandAnalyser;
+import com.ukma.nechyporchuk.core.CommandAnalyser;
+import com.ukma.nechyporchuk.core.Controller;
 import com.ukma.nechyporchuk.core.Message;
 import com.ukma.nechyporchuk.core.Packet;
 import com.ukma.nechyporchuk.network.Receiver;
@@ -14,13 +15,15 @@ import java.util.Random;
  * @author Danylo Nechyporchuk
  */
 public class FakeReceiver implements Receiver {
+    private long bPktId = 0;
+
     @Override
-    public byte[] receiveMessage() {
+    public void receiveMessage() {
         Random random = new Random();
 
 
         byte bSrc = (byte) random.nextInt(256);
-        long bPktId = random.nextLong();
+        long bPktId = this.bPktId += 2;
 
         int cType;
         switch (random.nextInt(6)) {
@@ -36,6 +39,7 @@ public class FakeReceiver implements Receiver {
         byte[] messageBytes = new byte[0];
         Message bMsg = new Message(cType, bUserId, messageBytes);
         Packet message = new Packet(bSrc, bPktId, bMsg);
-        return message.getPacket();
+
+        Controller.getInstance().workWithPacket(message.getPacket());
     }
 }
