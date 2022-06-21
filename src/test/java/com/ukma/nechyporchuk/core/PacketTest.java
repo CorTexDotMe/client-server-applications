@@ -1,3 +1,5 @@
+package com.ukma.nechyporchuk.core;
+
 import com.ukma.nechyporchuk.core.Message;
 import com.ukma.nechyporchuk.core.Packet;
 import org.junit.jupiter.api.BeforeAll;

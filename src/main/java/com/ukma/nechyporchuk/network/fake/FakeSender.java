@@ -6,6 +6,10 @@ import com.ukma.nechyporchuk.network.Sender;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Print packet message in console instead of sending packet.
+ *
+ */
 public class FakeSender implements Sender {
     @Override
     public void sendMessage(byte[] message, InetAddress target) {
