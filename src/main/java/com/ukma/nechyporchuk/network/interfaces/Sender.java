@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.network;
+package com.ukma.nechyporchuk.network.interfaces;
 
 import java.net.InetAddress;
 

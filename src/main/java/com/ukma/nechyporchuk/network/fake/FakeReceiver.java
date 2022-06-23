@@ -4,7 +4,7 @@ import com.ukma.nechyporchuk.core.CommandAnalyser;
 import com.ukma.nechyporchuk.core.Controller;
 import com.ukma.nechyporchuk.core.Message;
 import com.ukma.nechyporchuk.core.Packet;
-import com.ukma.nechyporchuk.network.Receiver;
+import com.ukma.nechyporchuk.network.interfaces.Receiver;
 
 import java.util.Random;
 

@@ -1,7 +1,7 @@
 package com.ukma.nechyporchuk.network.fake;
 
 import com.ukma.nechyporchuk.core.Packet;
-import com.ukma.nechyporchuk.network.Sender;
+import com.ukma.nechyporchuk.network.interfaces.Sender;
 
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
