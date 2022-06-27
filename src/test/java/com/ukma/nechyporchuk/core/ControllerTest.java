@@ -25,5 +25,6 @@ class ControllerTest {
             for (int i = 0; i < 100; i++)
                 threadPool.execute(this::send1000Messages);
         });
+        Controller.getInstance().shutdown();
     }
 }
