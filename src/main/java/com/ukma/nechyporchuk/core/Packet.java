@@ -1,9 +1,10 @@
 package com.ukma.nechyporchuk.core;
 
-import com.ukma.nechyporchuk.helpers.CRC16;
+import com.ukma.nechyporchuk.security.PacketCipher;
+import com.ukma.nechyporchuk.utils.CRC16;
 import com.ukma.nechyporchuk.security.Decryptor;
 import com.ukma.nechyporchuk.security.Encryptor;
-import com.ukma.nechyporchuk.security.PacketCipher;
+import com.ukma.nechyporchuk.utils.Constants;
 
 import java.nio.ByteBuffer;
 
@@ -24,10 +25,6 @@ import java.nio.ByteBuffer;
  * @author Danylo Nechyporchuk
  */
 public class Packet {
-    public static final int PACKET_LENGTH_WITHOUT_MESSAGE = 18;
-    private static final int BYTES_AMOUNT_FOR_FIRST_CHECKSUM = 14;
-    public static final byte bMagic = 0x13;
-
     private byte bSrc;
     private long bPktId;
     private int wLen;
@@ -36,7 +33,7 @@ public class Packet {
     private short wCrc16_second;
     private byte[] packet;
 
-//    private static final PacketCipher cipher = new PacketCipher();
+    private static final PacketCipher cipher = PacketCipher.getInstance();
 
     /**
      * Constructor is used to create packet before sending.
@@ -55,26 +52,28 @@ public class Packet {
         messageBuffer.putInt(bMsg.getCType());
         messageBuffer.putInt(bMsg.getBUserId());
         messageBuffer.put(bMsg.getMessage());
-        byte[] encryptedMessage = Encryptor.encrypt(messageBuffer.array());
-
+        byte[] encryptedMessage;
+        synchronized (cipher) {
+            encryptedMessage = cipher.encryptData(messageBuffer.array());
+        }
         //Initialize variables
         this.bSrc = bSrc;
         this.bPktId = bPktId;
         this.wLen = encryptedMessage.length;
         this.bMsg = bMsg;
-        this.packet = new byte[PACKET_LENGTH_WITHOUT_MESSAGE + wLen];
+        this.packet = new byte[Constants.PACKET_LENGTH_WITHOUT_MESSAGE + wLen];
 
         ByteBuffer buffer = ByteBuffer.wrap(this.packet);
         buffer.mark();
 
         //Put variables into packet(byte array)
-        buffer.put(bMagic);
+        buffer.put(Constants.bMagic);
         buffer.put(this.bSrc);
         buffer.putLong(this.bPktId);
         buffer.putInt(this.wLen);
 
         //Create first checksum
-        byte[] bytesForFirstChecksum = new byte[BYTES_AMOUNT_FOR_FIRST_CHECKSUM];
+        byte[] bytesForFirstChecksum = new byte[Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM];
         buffer.reset();
         buffer.get(bytesForFirstChecksum);
         this.wCrc16_first = CRC16.getCRC16(bytesForFirstChecksum);
@@ -85,6 +84,14 @@ public class Packet {
         //Create second checksum
         this.wCrc16_second = CRC16.getCRC16(encryptedMessage);
         buffer.putShort(this.wCrc16_second);
+    }
+
+    public Packet(ProcessorMessage message) {
+        this(
+                message.getbSrc(),
+                message.getbPktId(),
+                message.getMessage()
+        );
     }
 
     /**
@@ -103,7 +110,7 @@ public class Packet {
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         buffer.mark();
 
-        if (buffer.get() != bMagic)
+        if (buffer.get() != Constants.bMagic)
             throw new IllegalArgumentException("No start byte in byte array");
 
         this.packet = bytes;
@@ -112,7 +119,7 @@ public class Packet {
         this.wLen = buffer.getInt();
 
         //Test first checksum
-        byte[] bytesForFirstChecksum = new byte[BYTES_AMOUNT_FOR_FIRST_CHECKSUM];
+        byte[] bytesForFirstChecksum = new byte[Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM];
         buffer.reset();
         buffer.get(bytesForFirstChecksum);
         this.wCrc16_first = buffer.getShort();
@@ -129,8 +136,12 @@ public class Packet {
             throw new IllegalArgumentException("Wrong second checksum");
 
         //Decrypt message - decrypt, save
-        byte[] decryptedMessage = Decryptor.decrypt(encryptedMessage);
+        byte[] decryptedMessage;
+        synchronized (cipher) {
+            decryptedMessage = cipher.decryptData(encryptedMessage);
+        }
         this.bMsg = new Message(ByteBuffer.wrap(decryptedMessage));
+
     }
 
     public byte[] getPacket() {

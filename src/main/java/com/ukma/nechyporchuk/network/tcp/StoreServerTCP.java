@@ -1,11 +1,13 @@
 package com.ukma.nechyporchuk.network.tcp;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import com.ukma.nechyporchuk.core.Controller;
+import com.ukma.nechyporchuk.utils.Constants;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class StoreServerTCP {
@@ -13,8 +15,8 @@ public class StoreServerTCP {
 
     private static class ClientHandler extends Thread {
         private Socket clientSocket;
-        private PrintWriter out;
-        private BufferedReader in;
+        private DataOutputStream out;
+        private DataInputStream in;
 
         public ClientHandler(Socket clientSocket) {
             this.clientSocket = clientSocket;
@@ -23,24 +25,50 @@ public class StoreServerTCP {
         @Override
         public void run() {
             try {
-                out = new PrintWriter(clientSocket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                out = new DataOutputStream(clientSocket.getOutputStream());
+                in = new DataInputStream(clientSocket.getInputStream());
 
-                String input = in.readLine();
+//              Read packet
+                byte bMagic;
                 do {
-                    System.out.println(input);
-                    out.println("Message has been received");
-                    input = in.readLine();
-                    if (input.equals(".")) {
-                        out.println("bye");
-                        break;
-                    }
-                } while (input != null);
+
+                    bMagic = in.readByte();             // Trying to find magic byte in order to start reading packet
+                } while (bMagic != Constants.bMagic);
+
+                byte bSrc = in.readByte();
+                long bPktId = in.readLong();
+                int wLen = in.readInt();
+                short wCrc16_first = in.readShort();
+
+                ByteBuffer packet = ByteBuffer.wrap(new byte[
+                        Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM +
+                        Constants.BYTES_AMOUNT_OF_CRC +
+                        wLen +
+                        Constants.BYTES_AMOUNT_OF_CRC
+                        ]);
+                packet.put(bMagic).put(bSrc).putLong(bPktId).putInt(wLen).putShort(wCrc16_first);
+                packet.put(in.readNBytes(wLen));
+                short wCrc16_second = in.readShort();
+                packet.putShort(wCrc16_second);
+
+//              Process packet
+//                Controller.getInstance().workWithPacket(packet.array());
 
                 stopConnection();
 
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+            }
+
+        }
+
+        public void sendResponse(byte[] message) {
+            synchronized (out) {
+                try {
+                    out.write(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -61,6 +89,7 @@ public class StoreServerTCP {
             serverSocket = new ServerSocket(port);
             while (true)
                 new ClientHandler(serverSocket.accept()).start();
+//            TODO not while true, but appropriate amount of handlers.
 
         } catch (IOException e) {
             e.printStackTrace();

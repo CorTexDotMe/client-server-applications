@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.helpers;
+package com.ukma.nechyporchuk.utils;
 
 import org.junit.jupiter.api.Test;
 
