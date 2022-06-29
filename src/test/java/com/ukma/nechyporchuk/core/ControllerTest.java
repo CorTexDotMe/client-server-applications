@@ -1,6 +1,6 @@
 package com.ukma.nechyporchuk.core;
 
-import com.ukma.nechyporchuk.network.fake.FakeReceiver;
+import com.ukma.nechyporchuk.network.implementation.Receiver;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;
@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class ControllerTest {
 
     private void send1000Messages() {
-        FakeReceiver receiver = new FakeReceiver();
+//        Receiver receiver = new Receiver();
 
-        for (int i = 0; i < 1000; i++)
-            receiver.receiveMessage();
+        for (int i = 0; i < 1000; i++);
+//            receiver.receiveMessage();
     }
 
     @Test

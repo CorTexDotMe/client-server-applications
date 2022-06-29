@@ -1,5 +1,7 @@
-package com.ukma.nechyporchuk.helpers;
+package com.ukma.nechyporchuk.utils;
 
+import com.ukma.nechyporchuk.core.Packet;
+import com.ukma.nechyporchuk.network.implementation.Receiver;
 import com.ukma.nechyporchuk.security.Decryptor;
 import com.ukma.nechyporchuk.security.Encryptor;
 import com.ukma.nechyporchuk.security.PacketCipher;
@@ -23,6 +25,10 @@ class PacketCipherTest {
         byte[] originalData = "123456789qwerty".getBytes();
         byte[] encryptedData = Encryptor.encrypt(originalData);
         assertArrayEquals(originalData, Decryptor.decrypt(encryptedData));
+
+//        byte[] originalData = Receiver.getRandomPacket();
+//        byte[] another = new Packet(originalData).getPacket();
+//        assertArrayEquals(originalData, another);
     }
 
     @Test

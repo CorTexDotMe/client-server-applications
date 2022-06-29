@@ -1,8 +1,10 @@
 package com.ukma.nechyporchuk.core;
 
-import com.ukma.nechyporchuk.network.fake.FakeReceiver;
-import com.ukma.nechyporchuk.network.fake.FakeSender;
+import com.ukma.nechyporchuk.network.implementation.Receiver;
+import com.ukma.nechyporchuk.network.implementation.Sender;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -16,11 +18,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Controller {
     private static Controller INSTANCE;
     private final ThreadPoolExecutor threadPool;
-    private final FakeSender sender;
 
     private Controller() {
         threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        sender = new FakeSender();
     }
 
     public static Controller getInstance() {
@@ -30,8 +30,9 @@ public class Controller {
         return INSTANCE;
     }
 
-    public void workWithPacket(byte[] packet) {
-        threadPool.execute(() -> processPacket(packet));
+    public void workWithPacket(DataInputStream in, DataOutputStream out) {
+        threadPool.execute(() -> processPacket(in, out));
+//        return threadPool.getThreadFactory().newThread(() -> processPacket(in, out));
     }
 
     public void shutdown() {
@@ -41,10 +42,13 @@ public class Controller {
     /**
      * To process packet it needs to be decrypted and processed.
      * Then response is created and sent via Sender
-     *
-     * @param packet byte array with all information
      */
-    private void processPacket(byte[] packet) {
+    private void processPacket(DataInputStream in, DataOutputStream out) {
+
+        //Receive
+        Receiver receiver = new Receiver(in);
+        byte[] packet = receiver.receiveMessage();
+
         // Decryption
         Packet decryptedPacket = new Packet(packet);
 
@@ -60,18 +64,18 @@ public class Controller {
         );
 
         // Sending
-        synchronized (sender) {
-            sender.sendMessage(responsePacket.getPacket(), null);
-        }
+        Sender sender = new Sender(out);
+        sender.sendMessage(responsePacket.getPacket(), null);
+
     }
 
 
     public static void main(String[] args) {
         Controller controller = Controller.getInstance();
-        FakeReceiver receiver = new FakeReceiver();
+//        Receiver receiver = new Receiver();
 
         for (int i = 0; i < 100000; i++) {
-            receiver.receiveMessage();
+//            receiver.receiveMessage();
         }
         controller.shutdown();
     }

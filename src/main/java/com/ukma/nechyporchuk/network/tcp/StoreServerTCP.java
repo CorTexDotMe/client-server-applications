@@ -1,6 +1,8 @@
 package com.ukma.nechyporchuk.network.tcp;
 
 import com.ukma.nechyporchuk.core.Controller;
+import com.ukma.nechyporchuk.core.Message;
+import com.ukma.nechyporchuk.core.Packet;
 import com.ukma.nechyporchuk.utils.Constants;
 
 import java.io.*;
@@ -8,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class StoreServerTCP {
@@ -29,35 +32,47 @@ public class StoreServerTCP {
                 in = new DataInputStream(clientSocket.getInputStream());
 
 //              Read packet
-                byte bMagic;
-                do {
-
-                    bMagic = in.readByte();             // Trying to find magic byte in order to start reading packet
-                } while (bMagic != Constants.bMagic);
-
-                byte bSrc = in.readByte();
-                long bPktId = in.readLong();
-                int wLen = in.readInt();
-                short wCrc16_first = in.readShort();
-
-                ByteBuffer packet = ByteBuffer.wrap(new byte[
-                        Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM +
-                        Constants.BYTES_AMOUNT_OF_CRC +
-                        wLen +
-                        Constants.BYTES_AMOUNT_OF_CRC
-                        ]);
-                packet.put(bMagic).put(bSrc).putLong(bPktId).putInt(wLen).putShort(wCrc16_first);
-                packet.put(in.readNBytes(wLen));
-                short wCrc16_second = in.readShort();
-                packet.putShort(wCrc16_second);
+//                byte bMagic;
+//                do {
+//
+//                    bMagic = in.readByte();             // Trying to find magic byte in order to start reading packet
+//                } while (bMagic != Constants.bMagic);
+//
+//                byte bSrc = in.readByte();
+//                long bPktId = in.readLong();
+//                int wLen = in.readInt();
+//                short wCrc16_first = in.readShort();
+//
+//                ByteBuffer packet = ByteBuffer.wrap(new byte[
+//                        Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM +
+//                        Constants.BYTES_AMOUNT_OF_CRC +
+//                        wLen +
+//                        Constants.BYTES_AMOUNT_OF_CRC
+//                        ]);
+//                packet.put(bMagic).put(bSrc).putLong(bPktId).putInt(wLen).putShort(wCrc16_first);
+//                packet.put(in.readNBytes(wLen));
+//                short wCrc16_second = in.readShort();
+//                packet.putShort(wCrc16_second);
 
 //              Process packet
-//                Controller.getInstance().workWithPacket(packet.array());
+//                byte[] inputLine;
+//                while ((inputLine = in.readAllBytes()) != null) {
+//                    if (Arrays.equals(".".getBytes(), inputLine)) {
+//                        out.write(new Packet((byte) 0, 0L, new Message(0, 0, "good bye".getBytes())).getPacket());
+//                        break;
+//                    } else
+                Controller.getInstance().workWithPacket(in, out);
+//                }
+                while (true) {
+                }
 
-                stopConnection();
 
             } catch (IOException e) {
                 e.printStackTrace();
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+            } finally {
+                stopConnection();
             }
 
         }

@@ -25,9 +25,11 @@ public class PacketCipher {
     private static PacketCipher INSTANCE;
     private Cipher cipher;
     private SecretKey secretKey;
-    private SecureRandom secureRandom;
-    private final int keyLength = 128;
-    private final String password = "SWv<sh]cwfP'3,`+";
+    private final SecureRandom secureRandom = new SecureRandom();
+    private static final String password = "SWv<sh]cwfP'3,`+";
+    private static final byte[] iv = hexStringToByteArray("e04fd020ea3a6910a2d8080f");
+    private static final int keyLength = 128;
+
 
     /**
      * Initialize:
@@ -37,16 +39,12 @@ public class PacketCipher {
      */
     private PacketCipher() {
         try {
-            //Create initialization vector
-            secureRandom = new SecureRandom();
-            byte[] iv = new byte[12];
-            secureRandom.nextBytes(iv);
-
             //Create key for cipher
             secretKey = generateSecretKey(password, iv);
 
             //Create cipher
             cipher = Cipher.getInstance("AES/GCM/NoPadding");
+//            cipher = Cipher.getInstance("AES");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,7 +66,7 @@ public class PacketCipher {
      */
     public static SecretKey generateSecretKey(String password, byte[] initializationVector) {
         try {
-            KeySpec spec = new PBEKeySpec(password.toCharArray(), initializationVector, 65536, 128); // AES-128
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), initializationVector, 65536, keyLength); // AES-128
             SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             byte[] key = secretKeyFactory.generateSecret(spec).getEncoded();
             return new SecretKeySpec(key, "AES");
@@ -76,6 +74,16 @@ public class PacketCipher {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                                  + Character.digit(s.charAt(i + 1), 16));
+        }
+        return data;
     }
 
     /**
@@ -90,6 +98,7 @@ public class PacketCipher {
             byte[] iv = new byte[12];
             secureRandom.nextBytes(iv);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, new GCMParameterSpec(keyLength, iv));
+//            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
             byte[] encryptedData = cipher.doFinal(data);
 
@@ -120,6 +129,7 @@ public class PacketCipher {
             buffer.get(encryptedData);
 
             cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(keyLength, iv));
+//            cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return cipher.doFinal(encryptedData);
         } catch (Exception e) {
             e.printStackTrace();

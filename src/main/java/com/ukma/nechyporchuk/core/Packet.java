@@ -33,7 +33,7 @@ public class Packet {
     private short wCrc16_second;
     private byte[] packet;
 
-    private static final PacketCipher cipher = PacketCipher.getInstance();
+//    private static final PacketCipher cipher = PacketCipher.getInstance();
 
     /**
      * Constructor is used to create packet before sending.
@@ -52,10 +52,8 @@ public class Packet {
         messageBuffer.putInt(bMsg.getCType());
         messageBuffer.putInt(bMsg.getBUserId());
         messageBuffer.put(bMsg.getMessage());
-        byte[] encryptedMessage;
-        synchronized (cipher) {
-            encryptedMessage = cipher.encryptData(messageBuffer.array());
-        }
+        byte[] encryptedMessage = Encryptor.encrypt(messageBuffer.array());
+
         //Initialize variables
         this.bSrc = bSrc;
         this.bPktId = bPktId;
@@ -84,14 +82,6 @@ public class Packet {
         //Create second checksum
         this.wCrc16_second = CRC16.getCRC16(encryptedMessage);
         buffer.putShort(this.wCrc16_second);
-    }
-
-    public Packet(ProcessorMessage message) {
-        this(
-                message.getbSrc(),
-                message.getbPktId(),
-                message.getMessage()
-        );
     }
 
     /**
@@ -136,10 +126,7 @@ public class Packet {
             throw new IllegalArgumentException("Wrong second checksum");
 
         //Decrypt message - decrypt, save
-        byte[] decryptedMessage;
-        synchronized (cipher) {
-            decryptedMessage = cipher.decryptData(encryptedMessage);
-        }
+        byte[] decryptedMessage = Decryptor.decrypt(encryptedMessage);
         this.bMsg = new Message(ByteBuffer.wrap(decryptedMessage));
 
     }
