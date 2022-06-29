@@ -8,6 +8,8 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class StoreClientTCP {
     private Socket clientSocket;
@@ -20,9 +22,15 @@ public class StoreClientTCP {
         in = new DataInputStream(clientSocket.getInputStream());
     }
 
-    public String sendMessage(byte[] msg) throws IOException {
+    public void sendMessage(byte[] msg) throws IOException {
         out.write(msg);
+    }
 
+    public void sendEndMessage() throws IOException {
+        sendMessage(new byte[]{Constants.bEnd});
+    }
+
+    public String receiveMessage() {
         Packet packet = new Packet(readPacket());
 
         return packet.getBPktId() + " (bPktId). " +
@@ -65,12 +73,56 @@ public class StoreClientTCP {
     }
 
     public static void main(String[] args) throws IOException {
-        StoreClientTCP client = new StoreClientTCP();
+        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
+        StoreClientTCP tcp = new StoreClientTCP();
+//        tcp.task();
+
+        for (int i = 0; i < 100; i++)
+            threadPool.execute(tcp::task2);
+    }
+
+    private void task1() {
+        try {
+            StoreClientTCP client = new StoreClientTCP();
 //        client.startConnection("127.0.0.1", 1337);
-        client.startConnection("127.0.0.1", 6666);
-        String response1 = client.sendMessage(Receiver.getRandomPacket());
-//        String response2 = client.sendMessage(Receiver.getRandomPacket());
+            client.startConnection("127.0.0.1", 6666);
+            client.sendMessage(Receiver.getRandomPacket());
+            client.sendMessage(Receiver.getRandomPacket());
+            client.sendMessage(new byte[]{Constants.bEnd});
+
 //        String end = client.sendMessage(".".getBytes());
-        System.out.println(response1);
+            String response2 = client.receiveMessage();
+            String response1 = client.receiveMessage();
+            String responseEnd = client.receiveMessage();
+
+            System.out.println(response1);
+            System.out.println(response2);
+            System.out.println(responseEnd);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void task2() {
+        try {
+            StoreClientTCP client1 = new StoreClientTCP();
+            client1.startConnection("127.0.0.1", 6666);
+            client1.sendMessage(Receiver.getRandomPacket());
+
+            StoreClientTCP client2 = new StoreClientTCP();
+            client2.startConnection("127.0.0.1", 6666);
+            client2.sendMessage(Receiver.getRandomPacket());
+
+
+            String response1 = client1.receiveMessage();
+            String response2 = client2.receiveMessage();
+            System.out.println(response1);
+            System.out.println(response2);
+
+            client1.sendEndMessage();
+            client2.sendEndMessage();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -6,7 +6,9 @@ import com.ukma.nechyporchuk.network.implementation.Sender;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.function.Function;
 
 /**
  * Controller that has ThreadPool to process different packets using multiple threads
@@ -30,9 +32,10 @@ public class Controller {
         return INSTANCE;
     }
 
-    public void workWithPacket(DataInputStream in, DataOutputStream out) {
-        threadPool.execute(() -> processPacket(in, out));
-//        return threadPool.getThreadFactory().newThread(() -> processPacket(in, out));
+    public Future<?> workWithPacket(DataInputStream in, DataOutputStream out) {
+//        threadPool.execute(() -> processPacket(in, out));
+//        new Thread(() -> processPacket(in, out);
+        return threadPool.submit(() -> processPacket(in, out));
     }
 
     public void shutdown() {

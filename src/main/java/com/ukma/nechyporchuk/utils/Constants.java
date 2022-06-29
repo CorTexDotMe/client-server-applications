@@ -5,4 +5,5 @@ public class Constants {
     public static final int BYTES_AMOUNT_FOR_FIRST_CHECKSUM = 14;
     public static final int BYTES_AMOUNT_OF_CRC = 2;
     public static final byte bMagic = 0x13;
+    public static final byte bEnd = 0x0f;
 }

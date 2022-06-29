@@ -27,10 +27,6 @@ public class Receiver implements com.ukma.nechyporchuk.network.interfaces.Receiv
     @Override
     public byte[] receiveMessage() {
         try {
-            byte bMagic;
-            do {
-                bMagic = in.readByte();             // Trying to find magic byte in order to start reading packet
-            } while (bMagic != Constants.bMagic);
             byte bSrc = in.readByte();
             long bPktId = in.readLong();
             int wLen = in.readInt();
@@ -41,7 +37,7 @@ public class Receiver implements com.ukma.nechyporchuk.network.interfaces.Receiv
                     wLen +
                     Constants.BYTES_AMOUNT_OF_CRC
                     ]);
-            packet.put(bMagic).put(bSrc).putLong(bPktId).putInt(wLen).putShort(wCrc16_first);
+            packet.put(Constants.bMagic).put(bSrc).putLong(bPktId).putInt(wLen).putShort(wCrc16_first);
             packet.put(in.readNBytes(wLen));
             short wCrc16_second = in.readShort();
             packet.putShort(wCrc16_second);

@@ -12,12 +12,13 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class StoreServerTCP {
     private ServerSocket serverSocket;
 
     private static class ClientHandler extends Thread {
-        private Socket clientSocket;
+        private final Socket clientSocket;
         private DataOutputStream out;
         private DataInputStream in;
 
@@ -55,35 +56,37 @@ public class StoreServerTCP {
 //                packet.putShort(wCrc16_second);
 
 //              Process packet
-//                byte[] inputLine;
-//                while ((inputLine = in.readAllBytes()) != null) {
-//                    if (Arrays.equals(".".getBytes(), inputLine)) {
-//                        out.write(new Packet((byte) 0, 0L, new Message(0, 0, "good bye".getBytes())).getPacket());
-//                        break;
-//                    } else
-                Controller.getInstance().workWithPacket(in, out);
-//                }
+
                 while (true) {
+                    byte inputByte = in.readByte();
+                    switch (inputByte) {
+                        case Constants.bMagic:
+                            Controller.getInstance().workWithPacket(in, out).get();
+                            break;
+                        case Constants.bEnd:
+//                            out.writeUTF(".");
+                            out.write(new Packet((byte) 0, 0L, new Message(0, 0, "good bye".getBytes())).getPacket());
+                            stopConnection();
+                            return;
+                    }
                 }
+
+//                while ((inputLine = in.read()) != null) {
+//                if (Arrays.equals(".".getBytes(), inputLine)) {
+//                    out.write(new Packet((byte) 0, 0L, new Message(0, 0, "good bye".getBytes())).getPacket());
+//                        break;
+//                } else
+
+//                }
+//                while (true) {
+//                }
 
 
             } catch (IOException e) {
                 e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-            } finally {
                 stopConnection();
-            }
-
-        }
-
-        public void sendResponse(byte[] message) {
-            synchronized (out) {
-                try {
-                    out.write(message);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -104,7 +107,7 @@ public class StoreServerTCP {
             serverSocket = new ServerSocket(port);
             while (true)
                 new ClientHandler(serverSocket.accept()).start();
-//            TODO not while true, but appropriate amount of handlers.
+//          TODO not while true, but appropriate amount of handlers.
 
         } catch (IOException e) {
             e.printStackTrace();
