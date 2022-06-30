@@ -54,9 +54,6 @@ public class UDPReceiver implements com.ukma.nechyporchuk.network.interfaces.Rec
                     Controller.getInstance().workWithUDPPacket(this, socket, datagramPacket);
                 }
             }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return null;
         } catch (BufferUnderflowException ignored) {
 
         } catch (InterruptedException e) {

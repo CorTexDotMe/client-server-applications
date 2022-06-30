@@ -37,7 +37,7 @@ public class StoreClientUDP {
 
     public String receiveMessage(int port) {
         try {
-            buf = new byte[256];
+            buf = new byte[Constants.MAX_PACKET_LENGTH];
             DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
             socket.receive(packet);
 
@@ -45,6 +45,31 @@ public class StoreClientUDP {
 
             return responsePacket.getBPktId() + " (bPktId). " +
                    new String(responsePacket.getBMsg().getMessage(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String sendAndReceiveMessage(byte[] msg, int port) {
+        try {
+            buf = msg;
+            DatagramPacket packet
+                    = new DatagramPacket(buf, buf.length, address, port);
+            socket.send(packet);
+
+            buf = new byte[Constants.MAX_PACKET_LENGTH];
+            packet = new DatagramPacket(buf, buf.length, address, port);
+            socket.setSoTimeout(Constants.WAITING_TIME_MILLISECONDS);
+            socket.receive(packet);
+
+            Packet responsePacket = new Packet(packet.getData());
+
+            return responsePacket.getBPktId() + " (bPktId). " +
+                   new String(responsePacket.getBMsg().getMessage(), StandardCharsets.UTF_8);
+        } catch (SocketTimeoutException e) {
+            System.out.println("Sending packet again"); // for testing
+            return sendAndReceiveMessage(msg, port);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

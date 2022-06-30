@@ -1,18 +1,18 @@
 package com.ukma.nechyporchuk.network.implementation.udp;
 
-import com.ukma.nechyporchuk.core.Controller;
 import com.ukma.nechyporchuk.network.interfaces.Receiver;
 import com.ukma.nechyporchuk.utils.Constants;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.opentest4j.AssertionFailedError;
 
+import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UDPTest {
 
     private static StoreServerUDP server;
@@ -24,6 +24,7 @@ class UDPTest {
     }
 
     @Test
+    @Order(1)
     void test1() {
         StoreClientUDP client = new StoreClientUDP();
         client.sendMessage(Receiver.getRandomPacket(), Constants.UDP_PORT);
@@ -38,6 +39,7 @@ class UDPTest {
     }
 
     @Test
+    @Order(2)
     void test2() {
         StoreClientUDP client1 = new StoreClientUDP();
         StoreClientUDP client2 = new StoreClientUDP();
@@ -53,6 +55,7 @@ class UDPTest {
     }
 
     @Test
+    @Order(3)
     void testMultipleClients1() {
         ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
         UDPTest test = new UDPTest();
@@ -72,6 +75,7 @@ class UDPTest {
     }
 
     @Test
+    @Order(4)
     void testMultipleClients2() {
         ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
         UDPTest test = new UDPTest();
@@ -88,6 +92,20 @@ class UDPTest {
             threadPool.awaitTermination(2L, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
         }
+    }
+
+    @Test
+    @Order(5)
+    void resendTest() {
+//        Test should write "Sending packet again" in console.
+
+        assertThrows(AssertionFailedError.class, () -> {
+            assertTimeoutPreemptively(Duration.ofSeconds(12), () -> {
+                StoreClientUDP client = new StoreClientUDP();
+                client.sendAndReceiveMessage(new byte[]{Constants.bMagic, 0x13, 0x14}, Constants.UDP_PORT);
+            });
+        });
+
     }
 
     @AfterAll
