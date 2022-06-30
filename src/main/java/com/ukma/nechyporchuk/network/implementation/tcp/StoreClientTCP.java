@@ -1,7 +1,7 @@
-package com.ukma.nechyporchuk.network.tcp;
+package com.ukma.nechyporchuk.network.implementation.tcp;
 
 import com.ukma.nechyporchuk.core.Packet;
-import com.ukma.nechyporchuk.network.implementation.Receiver;
+import com.ukma.nechyporchuk.network.interfaces.Receiver;
 import com.ukma.nechyporchuk.utils.Constants;
 
 import java.io.*;

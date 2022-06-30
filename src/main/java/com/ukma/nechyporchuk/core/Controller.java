@@ -1,14 +1,19 @@
 package com.ukma.nechyporchuk.core;
 
-import com.ukma.nechyporchuk.network.implementation.Receiver;
-import com.ukma.nechyporchuk.network.implementation.Sender;
+import com.ukma.nechyporchuk.network.implementation.tcp.TCPReceiver;
+import com.ukma.nechyporchuk.network.implementation.tcp.TCPSender;
+import com.ukma.nechyporchuk.network.implementation.udp.UDPReceiver;
+import com.ukma.nechyporchuk.network.implementation.udp.UDPSender;
+import com.ukma.nechyporchuk.network.interfaces.Receiver;
+import com.ukma.nechyporchuk.network.interfaces.Sender;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.function.Function;
 
 /**
  * Controller that has ThreadPool to process different packets using multiple threads
@@ -32,10 +37,13 @@ public class Controller {
         return INSTANCE;
     }
 
-    public Future<?> workWithPacket(DataInputStream in, DataOutputStream out) {
-//        threadPool.execute(() -> processPacket(in, out));
-//        new Thread(() -> processPacket(in, out);
-        return threadPool.submit(() -> processPacket(in, out));
+    public Future<?> workWithTCPPacket(DataInputStream in, DataOutputStream out) {
+        return threadPool.submit(() -> processPacket(new TCPReceiver(in), new TCPSender(out)));
+    }
+
+    public Future<?> workWithUDPPacket(DatagramSocket datagramSocket, DatagramPacket datagramPacket) {
+        return threadPool.submit(() -> processPacket(new UDPReceiver(datagramPacket),
+                new UDPSender(datagramSocket, datagramPacket)));
     }
 
     public void shutdown() {
@@ -46,11 +54,13 @@ public class Controller {
      * To process packet it needs to be decrypted and processed.
      * Then response is created and sent via Sender
      */
-    private void processPacket(DataInputStream in, DataOutputStream out) {
+    private void processPacket(Receiver receiver, Sender sender) {
 
         //Receive
-        Receiver receiver = new Receiver(in);
         byte[] packet = receiver.receiveMessage();
+
+        if (packet == null)
+            return;
 
         // Decryption
         Packet decryptedPacket = new Packet(packet);
@@ -67,9 +77,7 @@ public class Controller {
         );
 
         // Sending
-        Sender sender = new Sender(out);
-        sender.sendMessage(responsePacket.getPacket(), null);
-
+        sender.sendMessage(responsePacket.getPacket());
     }
 
 

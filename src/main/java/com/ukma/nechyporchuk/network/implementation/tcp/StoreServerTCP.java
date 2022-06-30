@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.network.tcp;
+package com.ukma.nechyporchuk.network.implementation.tcp;
 
 import com.ukma.nechyporchuk.core.Controller;
 import com.ukma.nechyporchuk.core.Message;
@@ -8,10 +8,6 @@ import com.ukma.nechyporchuk.utils.Constants;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class StoreServerTCP {
@@ -56,12 +52,12 @@ public class StoreServerTCP {
 //                packet.putShort(wCrc16_second);
 
 //              Process packet
-
+//              TODO 3 bEnd bytes to stop connection. If yes then stop. PLUS RECONNECT. PLUS NOT WHILE TRUE
                 while (true) {
                     byte inputByte = in.readByte();
                     switch (inputByte) {
                         case Constants.bMagic:
-                            Controller.getInstance().workWithPacket(in, out).get();
+                            Controller.getInstance().workWithTCPPacket(in, out).get();
                             break;
                         case Constants.bEnd:
 //                            out.writeUTF(".");

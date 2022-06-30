@@ -1,6 +1,5 @@
 package com.ukma.nechyporchuk.core;
 
-import com.ukma.nechyporchuk.network.implementation.Receiver;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Executors;

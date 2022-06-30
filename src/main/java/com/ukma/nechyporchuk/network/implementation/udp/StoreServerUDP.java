@@ -1,10 +1,13 @@
-package com.ukma.nechyporchuk.network.udp;
+package com.ukma.nechyporchuk.network.implementation.udp;
+
+import com.ukma.nechyporchuk.core.Controller;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.concurrent.ExecutionException;
 
 public class StoreServerUDP extends Thread {
     private DatagramSocket socket;
@@ -24,25 +27,26 @@ public class StoreServerUDP extends Thread {
 
         while (running) {
             try {
-                DatagramPacket packet
-                        = new DatagramPacket(buf, buf.length);
+                DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length);
+                socket.receive(datagramPacket);
 
-                socket.receive(packet);
+                Controller.getInstance().workWithUDPPacket(socket, datagramPacket).get();
 
-                InetAddress address = packet.getAddress();
-                int port = packet.getPort();
-                packet = new DatagramPacket(buf, buf.length, address, port);
+
+                InetAddress address = datagramPacket.getAddress();
+                int port = datagramPacket.getPort();
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
                 String received
                         = new String(packet.getData(), 0, packet.getLength());
 
                 if (received.equals("end")) {
                     running = false;
-                    continue;
+//                    continue;
                 }
-
-                socket.send(packet);
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
         socket.close();

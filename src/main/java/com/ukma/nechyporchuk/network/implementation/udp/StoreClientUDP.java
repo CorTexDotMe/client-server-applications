@@ -1,7 +1,11 @@
-package com.ukma.nechyporchuk.network.udp;
+package com.ukma.nechyporchuk.network.implementation.udp;
+
+import com.ukma.nechyporchuk.core.Packet;
+import com.ukma.nechyporchuk.network.interfaces.Receiver;
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 
 public class StoreClientUDP {
     private DatagramSocket socket;
@@ -19,18 +23,21 @@ public class StoreClientUDP {
 
     }
 
-    public String sendEcho(String msg) {
+    public String sendMessage(byte[] msg, int port) {
         try {
-            buf = msg.getBytes();
+            buf = msg;
             DatagramPacket packet
-                    = new DatagramPacket(buf, buf.length, address, 1337);
+                    = new DatagramPacket(buf, buf.length, address, port);
             socket.send(packet);
 
+            buf = new byte[256];
             packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
-            String received = new String(
-                    packet.getData(), 0, packet.getLength());
-            return received;
+
+            Packet responsePacket = new Packet(packet.getData());
+
+            return responsePacket.getBPktId() + " (bPktId). " +
+                   new String(responsePacket.getBMsg().getMessage(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -42,8 +49,10 @@ public class StoreClientUDP {
     }
 
     public static void main(String[] args) {
+        //Todo port as constant value
+
         StoreClientUDP client = new StoreClientUDP();
-        String response = client.sendEcho("Hello");
+        String response = client.sendMessage(Receiver.getRandomPacket(), 1337);
         System.out.println(response);
     }
 }
