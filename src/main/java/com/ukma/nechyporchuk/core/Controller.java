@@ -45,8 +45,6 @@ public class Controller {
     }
 
     public void workWithUDPPacket(Receiver receiver, DatagramSocket datagramSocket, DatagramPacket datagramPacket) {
-//        return threadPool.submit(() -> processPacket(new UDPReceiver(datagramPacket),
-//                new UDPSender(datagramSocket, datagramPacket)));
         threadPool.execute(() -> processPacket(
                 receiver,
                 new UDPSender(datagramSocket, datagramPacket)

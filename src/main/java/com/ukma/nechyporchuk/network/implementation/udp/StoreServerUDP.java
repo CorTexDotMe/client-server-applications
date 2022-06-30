@@ -10,7 +10,7 @@ import java.net.SocketException;
 public class StoreServerUDP extends Thread {
     private DatagramSocket socket;
     private boolean running = true;
-    private byte[] buf = new byte[256];
+    private final byte[] buf = new byte[Constants.MAX_PACKET_LENGTH];
 
     public StoreServerUDP() {
         try {

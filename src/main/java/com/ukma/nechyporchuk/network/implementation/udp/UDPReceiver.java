@@ -3,7 +3,6 @@ package com.ukma.nechyporchuk.network.implementation.udp;
 import com.ukma.nechyporchuk.core.Controller;
 import com.ukma.nechyporchuk.utils.Constants;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.nio.BufferUnderflowException;
@@ -18,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 public class UDPReceiver implements com.ukma.nechyporchuk.network.interfaces.Receiver {
 
     public final static BlockingQueue<byte[]> receivedPackets = new LinkedBlockingQueue<>();
-    private DatagramSocket socket;
-    private DatagramPacket datagramPacket;
+    private final DatagramSocket socket;
+    private final DatagramPacket datagramPacket;
 
     public UDPReceiver(DatagramSocket socket, DatagramPacket datagramPacket) {
         this.socket = socket;
@@ -29,7 +28,6 @@ public class UDPReceiver implements com.ukma.nechyporchuk.network.interfaces.Rec
     @Override
     public void receiveMessage() {
         try {
-
             ByteBuffer receivedBytes = ByteBuffer.wrap(datagramPacket.getData());
 
             while (receivedBytes.remaining() > 0) {

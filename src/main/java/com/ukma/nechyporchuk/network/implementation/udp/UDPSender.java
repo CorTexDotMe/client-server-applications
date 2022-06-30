@@ -8,8 +8,8 @@ import java.net.DatagramSocket;
 
 public class UDPSender implements Sender {
 
-    private DatagramSocket socket;
-    private DatagramPacket datagramPacket;
+    private final DatagramSocket socket;
+    private final DatagramPacket datagramPacket;
 
     public UDPSender(DatagramSocket socket, DatagramPacket datagramPacket) {
         this.socket = socket;
