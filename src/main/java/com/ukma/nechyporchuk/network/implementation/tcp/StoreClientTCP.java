@@ -4,22 +4,41 @@ import com.ukma.nechyporchuk.core.Packet;
 import com.ukma.nechyporchuk.network.interfaces.Receiver;
 import com.ukma.nechyporchuk.utils.Constants;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class StoreClientTCP {
     private Socket clientSocket;
+    private String ip;
+    private int port;
+
     private DataOutputStream out;
     private DataInputStream in;
 
-    public void startConnection(String ip, int port) throws IOException {
-        clientSocket = new Socket(ip, port);
-        out = new DataOutputStream(clientSocket.getOutputStream());
-        in = new DataInputStream(clientSocket.getInputStream());
+    public void startConnection(String ip, int port) {
+        try {
+            this.ip = ip;
+            this.port = port;
+
+            clientSocket = new Socket(ip, port);
+            out = new DataOutputStream(clientSocket.getOutputStream());
+            in = new DataInputStream(clientSocket.getInputStream());
+        } catch (ConnectException e) {
+            try {
+//              Client is trying to reconnect
+                Thread.sleep(Constants.WAITING_TIME_MILLISECONDS);
+                startConnection(ip, port);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendMessage(byte[] msg) throws IOException {
@@ -31,38 +50,52 @@ public class StoreClientTCP {
     }
 
     public String receiveMessage() {
-        Packet packet = new Packet(readPacket());
-
-        return packet.getBPktId() + " (bPktId). " +
-               new String(packet.getBMsg().getMessage(), StandardCharsets.UTF_8);
-    }
-
-    private byte[] readPacket() {
         try {
-            byte bMagic;
-            do {
-                bMagic = in.readByte();             // Trying to find magic byte in order to start reading packet
-            } while (bMagic != Constants.bMagic);
-            byte bSrc = in.readByte();
-            long bPktId = in.readLong();
-            int wLen = in.readInt();
-            short wCrc16_first = in.readShort();
-            ByteBuffer packet = ByteBuffer.wrap(new byte[
-                    Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM +
-                    Constants.BYTES_AMOUNT_OF_CRC +
-                    wLen +
-                    Constants.BYTES_AMOUNT_OF_CRC
-                    ]);
-            packet.put(bMagic).put(bSrc).putLong(bPktId).putInt(wLen).putShort(wCrc16_first);
-            packet.put(in.readNBytes(wLen));
-            short wCrc16_second = in.readShort();
-            packet.putShort(wCrc16_second);
-
-
-            return packet.array();
+            return decryptPacket(readPacket());
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private byte[] readPacket() throws IOException {
+        byte bMagic;
+        do {
+            bMagic = in.readByte();             // Trying to find magic byte in order to start reading packet
+        } while (bMagic != Constants.bMagic);
+        byte bSrc = in.readByte();
+        long bPktId = in.readLong();
+        int wLen = in.readInt();
+        short wCrc16_first = in.readShort();
+        ByteBuffer packet = ByteBuffer.wrap(new byte[
+                Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM +
+                Constants.BYTES_AMOUNT_OF_CRC +
+                wLen +
+                Constants.BYTES_AMOUNT_OF_CRC
+                ]);
+        packet.put(bMagic).put(bSrc).putLong(bPktId).putInt(wLen).putShort(wCrc16_first);
+        packet.put(in.readNBytes(wLen));
+        short wCrc16_second = in.readShort();
+        packet.putShort(wCrc16_second);
+
+
+        return packet.array();
+    }
+
+    public String sendAndReceiveMessage(byte[] msg) {
+        try {
+            out.write(msg);
+
+            return decryptPacket(readPacket());
+        } catch (IOException e) {
+            try {
+//              Client is trying to reconnect
+                Thread.sleep(Constants.WAITING_TIME_MILLISECONDS);
+                startConnection(ip, port);
+                return sendAndReceiveMessage(msg);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
@@ -72,57 +105,26 @@ public class StoreClientTCP {
         clientSocket.close();
     }
 
+    private String decryptPacket(byte[] packet) {
+        Packet responsePacket = new Packet(packet);
+        return responsePacket.getBPktId() + " (bPktId). " +
+               new String(responsePacket.getBMsg().getMessage(), StandardCharsets.UTF_8);
+    }
+
     public static void main(String[] args) throws IOException {
-        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
-        StoreClientTCP tcp = new StoreClientTCP();
-//        tcp.task1();
+        StoreClientTCP client = new StoreClientTCP();
+        client.startConnection("127.0.0.1", Constants.TCP_PORT);
+        client.sendMessage(Receiver.getRandomPacket());
+        client.sendMessage(Receiver.getRandomPacket());
+        client.sendEndMessage();
 
-        for (int i = 0; i < 100; i++)
-            threadPool.execute(tcp::task2);
+        String response2 = client.receiveMessage();
+        String response1 = client.receiveMessage();
+        String responseEnd = client.receiveMessage();
+
+        System.out.println(response1);
+        System.out.println(response2);
+        System.out.println(responseEnd);
     }
 
-    private void task1() {
-        try {
-            StoreClientTCP client = new StoreClientTCP();
-//        client.startConnection("127.0.0.1", 1337);
-            client.startConnection("127.0.0.1", 6666);
-            client.sendMessage(Receiver.getRandomPacket());
-            client.sendMessage(Receiver.getRandomPacket());
-            client.sendEndMessage();
-
-//        String end = client.sendMessage(".".getBytes());
-            String response2 = client.receiveMessage();
-            String response1 = client.receiveMessage();
-            String responseEnd = client.receiveMessage();
-
-            System.out.println(response1);
-            System.out.println(response2);
-            System.out.println(responseEnd);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void task2() {
-        try {
-            StoreClientTCP client1 = new StoreClientTCP();
-            client1.startConnection("127.0.0.1", 6666);
-            client1.sendMessage(Receiver.getRandomPacket());
-
-            StoreClientTCP client2 = new StoreClientTCP();
-            client2.startConnection("127.0.0.1", 6666);
-            client2.sendMessage(Receiver.getRandomPacket());
-
-
-            String response1 = client1.receiveMessage();
-            String response2 = client2.receiveMessage();
-            System.out.println(response1);
-            System.out.println(response2);
-
-            client1.sendEndMessage();
-            client2.sendEndMessage();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

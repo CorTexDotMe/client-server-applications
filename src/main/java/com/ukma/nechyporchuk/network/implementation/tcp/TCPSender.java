@@ -2,7 +2,6 @@ package com.ukma.nechyporchuk.network.implementation.tcp;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
 
 /**
  * Print packet message in console instead of sending packet.

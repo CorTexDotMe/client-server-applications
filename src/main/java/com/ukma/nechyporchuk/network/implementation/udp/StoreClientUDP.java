@@ -71,13 +71,10 @@ public class StoreClientUDP {
      */
     public String sendAndReceiveMessage(byte[] msg, int port) {
         try {
-            buf = msg;
-            DatagramPacket packet
-                    = new DatagramPacket(buf, buf.length, address, port);
-            socket.send(packet);
+            sendMessage(msg, port);
 
             buf = new byte[Constants.MAX_PACKET_LENGTH];
-            packet = new DatagramPacket(buf, buf.length, address, port);
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
 
             socket.setSoTimeout(Constants.WAITING_TIME_MILLISECONDS);
             socket.receive(packet);

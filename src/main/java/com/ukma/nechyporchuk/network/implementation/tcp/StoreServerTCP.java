@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 
 public class StoreServerTCP {
     private ServerSocket serverSocket;
+    private boolean running = true;
 
     private static class ClientHandler extends Thread {
         private final Socket clientSocket;
@@ -29,7 +30,6 @@ public class StoreServerTCP {
                 in = new DataInputStream(clientSocket.getInputStream());
 
 //              Process packet
-//              TODO PLUS RECONNECT. PLUS NOT WHILE TRUE
                 while (true) {
                     byte inputByte = in.readByte();
                     switch (inputByte) {
@@ -89,17 +89,20 @@ public class StoreServerTCP {
     public void start(int port) {
         try {
             serverSocket = new ServerSocket(port);
-            while (true)
+            while (running)
                 new ClientHandler(serverSocket.accept()).start();
-//          TODO not while true, but appropriate amount of handlers.
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public void stopServer() {
+        running = false;
+    }
+
     public static void main(String[] args) {
         StoreServerTCP server = new StoreServerTCP();
-        server.start(6666);
+        server.start(Constants.TCP_PORT);
     }
 }

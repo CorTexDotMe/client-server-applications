@@ -1,13 +1,10 @@
 package com.ukma.nechyporchuk.core;
 
-import com.ukma.nechyporchuk.network.implementation.tcp.TCPReceiver;
 import com.ukma.nechyporchuk.network.implementation.tcp.TCPSender;
-import com.ukma.nechyporchuk.network.implementation.udp.UDPReceiver;
 import com.ukma.nechyporchuk.network.implementation.udp.UDPSender;
 import com.ukma.nechyporchuk.network.interfaces.Receiver;
 import com.ukma.nechyporchuk.network.interfaces.Sender;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -90,9 +87,9 @@ public class Controller {
         Controller controller = Controller.getInstance();
 //        Receiver receiver = new Receiver();
 
-        for (int i = 0; i < 100000; i++) {
+//        for (int i = 0; i < 100000; i++) {
 //            receiver.receiveMessage();
-        }
+//        }
         controller.shutdown();
     }
 }

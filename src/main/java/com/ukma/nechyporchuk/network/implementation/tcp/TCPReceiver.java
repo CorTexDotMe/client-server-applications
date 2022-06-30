@@ -1,15 +1,10 @@
 package com.ukma.nechyporchuk.network.implementation.tcp;
 
-import com.ukma.nechyporchuk.core.CommandAnalyser;
-import com.ukma.nechyporchuk.core.Controller;
-import com.ukma.nechyporchuk.core.Message;
-import com.ukma.nechyporchuk.core.Packet;
 import com.ukma.nechyporchuk.utils.Constants;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TCPReceiver implements com.ukma.nechyporchuk.network.interfaces.Receiver {
     public final static BlockingQueue<byte[]> receivedPackets = new LinkedBlockingQueue<>();
-    private DataInputStream in;
+    private final DataInputStream in;
 
     public TCPReceiver(DataInputStream in) {
         this.in = in;
@@ -27,20 +22,6 @@ public class TCPReceiver implements com.ukma.nechyporchuk.network.interfaces.Rec
 
     @Override
     public void receiveMessage() {
-//            byte bSrc = in.readByte();
-//            long bPktId = in.readLong();
-//            int wLen = in.readInt();
-//            short wCrc16_first = in.readShort();
-//            ByteBuffer packet = ByteBuffer.wrap(new byte[
-//                    Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM +
-//                    Constants.BYTES_AMOUNT_OF_CRC +
-//                    wLen +
-//                    Constants.BYTES_AMOUNT_OF_CRC
-//                    ]);
-//            packet.put(Constants.bMagic).put(bSrc).putLong(bPktId).putInt(wLen).putShort(wCrc16_first);
-//            packet.put(in.readNBytes(wLen));
-//            short wCrc16_second = in.readShort();
-//            packet.putShort(wCrc16_second);
         try {
             byte bSrc = in.readByte();
             long bPktId = in.readLong();
