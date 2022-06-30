@@ -10,15 +10,15 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Random;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Create packet out of thin air.
- * Random class is used
- *
  * @author Danylo Nechyporchuk
  */
 public class TCPReceiver implements com.ukma.nechyporchuk.network.interfaces.Receiver {
-
+    public final static BlockingQueue<byte[]> receivedPackets = new LinkedBlockingQueue<>();
     private DataInputStream in;
 
     public TCPReceiver(DataInputStream in) {
@@ -26,7 +26,7 @@ public class TCPReceiver implements com.ukma.nechyporchuk.network.interfaces.Rec
     }
 
     @Override
-    public byte[] receiveMessage() {
+    public void receiveMessage() {
 //            byte bSrc = in.readByte();
 //            long bPktId = in.readLong();
 //            int wLen = in.readInt();
@@ -49,7 +49,7 @@ public class TCPReceiver implements com.ukma.nechyporchuk.network.interfaces.Rec
                                         wLen +
                                         Constants.BYTES_AMOUNT_OF_CRC];
             if (in.read(remainder) < remainder.length)
-                return null;
+                return;
 
             ByteBuffer packet = ByteBuffer.wrap(new byte[
                     Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM +
@@ -58,13 +58,20 @@ public class TCPReceiver implements com.ukma.nechyporchuk.network.interfaces.Rec
             packet.put(Constants.bMagic).put(bSrc).putLong(bPktId).putInt(wLen);
             packet.put(remainder);
 
-
-            return packet.array();
-        } catch (IOException e) {
+            receivedPackets.put(packet.array());
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            return null;
         }
     }
 
-    private static long bPktId = 0;
+    public byte[] poll() {
+        try {
+            byte[] result = null;
+            while (result == null)
+                result = receivedPackets.poll(Constants.POLL_TIMEOUT, TimeUnit.MILLISECONDS);
+            return result;
+        } catch (InterruptedException e) {
+            return poll();
+        }
+    }
 }

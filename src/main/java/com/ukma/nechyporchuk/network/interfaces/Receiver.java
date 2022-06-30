@@ -9,7 +9,9 @@ import com.ukma.nechyporchuk.utils.Constants;
 import java.util.Random;
 
 public interface Receiver {
-    byte[] receiveMessage();
+    void receiveMessage();
+
+    byte[] poll();
 
     static byte[] getRandomPacket() {
         Random random = new Random();

@@ -27,7 +27,7 @@ public class StoreClientTCP {
     }
 
     public void sendEndMessage() throws IOException {
-        sendMessage(new byte[]{Constants.bEnd});
+        sendMessage(Constants.bEndMessage);
     }
 
     public String receiveMessage() {
@@ -75,7 +75,7 @@ public class StoreClientTCP {
     public static void main(String[] args) throws IOException {
         ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(100);
         StoreClientTCP tcp = new StoreClientTCP();
-//        tcp.task();
+//        tcp.task1();
 
         for (int i = 0; i < 100; i++)
             threadPool.execute(tcp::task2);
@@ -88,7 +88,7 @@ public class StoreClientTCP {
             client.startConnection("127.0.0.1", 6666);
             client.sendMessage(Receiver.getRandomPacket());
             client.sendMessage(Receiver.getRandomPacket());
-            client.sendMessage(new byte[]{Constants.bEnd});
+            client.sendEndMessage();
 
 //        String end = client.sendMessage(".".getBytes());
             String response2 = client.receiveMessage();

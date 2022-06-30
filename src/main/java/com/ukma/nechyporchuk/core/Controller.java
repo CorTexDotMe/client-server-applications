@@ -37,13 +37,20 @@ public class Controller {
         return INSTANCE;
     }
 
-    public Future<?> workWithTCPPacket(DataInputStream in, DataOutputStream out) {
-        return threadPool.submit(() -> processPacket(new TCPReceiver(in), new TCPSender(out)));
+    public Future<?> workWithTCPPacket(Receiver receiver, DataOutputStream out) {
+        return threadPool.submit(() -> processPacket(
+                receiver,
+                new TCPSender(out)
+        ));
     }
 
-    public Future<?> workWithUDPPacket(DatagramSocket datagramSocket, DatagramPacket datagramPacket) {
-        return threadPool.submit(() -> processPacket(new UDPReceiver(datagramPacket),
-                new UDPSender(datagramSocket, datagramPacket)));
+    public void workWithUDPPacket(Receiver receiver, DatagramSocket datagramSocket, DatagramPacket datagramPacket) {
+//        return threadPool.submit(() -> processPacket(new UDPReceiver(datagramPacket),
+//                new UDPSender(datagramSocket, datagramPacket)));
+        threadPool.execute(() -> processPacket(
+                receiver,
+                new UDPSender(datagramSocket, datagramPacket)
+        ));
     }
 
     public void shutdown() {
@@ -57,7 +64,7 @@ public class Controller {
     private void processPacket(Receiver receiver, Sender sender) {
 
         //Receive
-        byte[] packet = receiver.receiveMessage();
+        byte[] packet = receiver.poll();
 
         if (packet == null)
             return;

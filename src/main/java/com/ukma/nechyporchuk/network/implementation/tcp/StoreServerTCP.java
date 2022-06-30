@@ -28,62 +28,46 @@ public class StoreServerTCP {
                 out = new DataOutputStream(clientSocket.getOutputStream());
                 in = new DataInputStream(clientSocket.getInputStream());
 
-//              Read packet
-//                byte bMagic;
-//                do {
-//
-//                    bMagic = in.readByte();             // Trying to find magic byte in order to start reading packet
-//                } while (bMagic != Constants.bMagic);
-//
-//                byte bSrc = in.readByte();
-//                long bPktId = in.readLong();
-//                int wLen = in.readInt();
-//                short wCrc16_first = in.readShort();
-//
-//                ByteBuffer packet = ByteBuffer.wrap(new byte[
-//                        Constants.BYTES_AMOUNT_FOR_FIRST_CHECKSUM +
-//                        Constants.BYTES_AMOUNT_OF_CRC +
-//                        wLen +
-//                        Constants.BYTES_AMOUNT_OF_CRC
-//                        ]);
-//                packet.put(bMagic).put(bSrc).putLong(bPktId).putInt(wLen).putShort(wCrc16_first);
-//                packet.put(in.readNBytes(wLen));
-//                short wCrc16_second = in.readShort();
-//                packet.putShort(wCrc16_second);
-
 //              Process packet
-//              TODO 3 bEnd bytes to stop connection. If yes then stop. PLUS RECONNECT. PLUS NOT WHILE TRUE
+//              TODO PLUS RECONNECT. PLUS NOT WHILE TRUE
                 while (true) {
                     byte inputByte = in.readByte();
                     switch (inputByte) {
                         case Constants.bMagic:
-                            Controller.getInstance().workWithTCPPacket(in, out).get();
+                            process();
                             break;
                         case Constants.bEnd:
-//                            out.writeUTF(".");
-                            out.write(new Packet((byte) 0, 0L, new Message(0, 0, "good bye".getBytes())).getPacket());
-                            stopConnection();
-                            return;
+                            int bEndBytesAmount = 1;
+
+                            for (int i = 1; i < Constants.bEndMessage.length; i++) {
+                                inputByte = in.readByte();
+                                if (inputByte == Constants.bMagic) {
+                                    process();
+                                    break;
+                                }
+                                if (inputByte != Constants.bEnd)
+                                    break;
+
+                                bEndBytesAmount++;
+                            }
+                            if (bEndBytesAmount == Constants.bEndMessage.length) {
+                                sendEndResponse();
+                                stopConnection();
+                                return;
+                            }
                     }
                 }
 
-//                while ((inputLine = in.read()) != null) {
-//                if (Arrays.equals(".".getBytes(), inputLine)) {
-//                    out.write(new Packet((byte) 0, 0L, new Message(0, 0, "good bye".getBytes())).getPacket());
-//                        break;
-//                } else
-
-//                }
-//                while (true) {
-//                }
-
-
-            } catch (IOException e) {
+            } catch (IOException | ExecutionException | InterruptedException e) {
                 e.printStackTrace();
                 stopConnection();
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
             }
+        }
+
+        private void process() throws ExecutionException, InterruptedException {
+            TCPReceiver receiver = new TCPReceiver(in);
+            receiver.receiveMessage();
+            Controller.getInstance().workWithTCPPacket(receiver, out).get();
         }
 
         private void stopConnection() {
@@ -95,6 +79,10 @@ public class StoreServerTCP {
                 throw new RuntimeException(e);
             }
 
+        }
+
+        private void sendEndResponse() throws IOException {
+            out.write(new Packet((byte) 0, 0L, new Message(0, 0, "good bye".getBytes())).getPacket());
         }
     }
 

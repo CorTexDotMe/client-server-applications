@@ -2,6 +2,7 @@ package com.ukma.nechyporchuk.network.implementation.udp;
 
 import com.ukma.nechyporchuk.core.Packet;
 import com.ukma.nechyporchuk.network.interfaces.Receiver;
+import com.ukma.nechyporchuk.utils.Constants;
 
 import java.io.IOException;
 import java.net.*;
@@ -23,15 +24,21 @@ public class StoreClientUDP {
 
     }
 
-    public String sendMessage(byte[] msg, int port) {
+    public void sendMessage(byte[] msg, int port) {
         try {
             buf = msg;
             DatagramPacket packet
                     = new DatagramPacket(buf, buf.length, address, port);
             socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public String receiveMessage(int port) {
+        try {
             buf = new byte[256];
-            packet = new DatagramPacket(buf, buf.length);
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
             socket.receive(packet);
 
             Packet responsePacket = new Packet(packet.getData());
@@ -52,7 +59,8 @@ public class StoreClientUDP {
         //Todo port as constant value
 
         StoreClientUDP client = new StoreClientUDP();
-        String response = client.sendMessage(Receiver.getRandomPacket(), 1337);
+        client.sendMessage(Receiver.getRandomPacket(), Constants.UDP_PORT);
+        String response = client.receiveMessage(Constants.UDP_PORT);
         System.out.println(response);
     }
 }

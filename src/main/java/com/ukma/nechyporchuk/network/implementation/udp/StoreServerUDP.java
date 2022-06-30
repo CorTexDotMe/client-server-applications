@@ -1,6 +1,8 @@
 package com.ukma.nechyporchuk.network.implementation.udp;
 
 import com.ukma.nechyporchuk.core.Controller;
+import com.ukma.nechyporchuk.network.interfaces.Receiver;
+import com.ukma.nechyporchuk.utils.Constants;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -11,45 +13,35 @@ import java.util.concurrent.ExecutionException;
 
 public class StoreServerUDP extends Thread {
     private DatagramSocket socket;
-    private boolean running;
+    private boolean running = true;
     private byte[] buf = new byte[256];
 
     public StoreServerUDP() {
         try {
-            socket = new DatagramSocket(1337);
+            socket = new DatagramSocket(Constants.UDP_PORT);
         } catch (SocketException e) {
             e.printStackTrace();
         }
     }
 
     public void run() {
-        running = true;
-
         while (running) {
-            try {
-                DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length);
-                socket.receive(datagramPacket);
-
-                Controller.getInstance().workWithUDPPacket(socket, datagramPacket).get();
-
-
-                InetAddress address = datagramPacket.getAddress();
-                int port = datagramPacket.getPort();
-                DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
-                String received
-                        = new String(packet.getData(), 0, packet.getLength());
-
-                if (received.equals("end")) {
-                    running = false;
-//                    continue;
+//            new Thread(() -> {
+                try {
+                    DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length);
+                    socket.receive(datagramPacket);
+                    UDPReceiver receiver = new UDPReceiver(socket, datagramPacket);
+                    receiver.receiveMessage();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ExecutionException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+//            }).start();
         }
         socket.close();
+    }
+
+    public void stopServer() {
+        running = false;
     }
 
     public static void main(String[] args) {

@@ -10,6 +10,8 @@ import com.ukma.nechyporchuk.core.Message;
  *
  */
 public class Processor {
+
+    private boolean endPacket = false;
     public Message process(Message message) {
         byte[] response;
 

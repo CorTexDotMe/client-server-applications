@@ -1,28 +1,33 @@
 package com.ukma.nechyporchuk.network.implementation.udp;
 
+import com.ukma.nechyporchuk.core.Controller;
 import com.ukma.nechyporchuk.utils.Constants;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Create packet out of thin air.
- * Random class is used
- *
  * @author Danylo Nechyporchuk
  */
 public class UDPReceiver implements com.ukma.nechyporchuk.network.interfaces.Receiver {
 
+    public final static BlockingQueue<byte[]> receivedPackets = new LinkedBlockingQueue<>();
+    private DatagramSocket socket;
     private DatagramPacket datagramPacket;
-    private byte[] buf = new byte[256];
-    public UDPReceiver(DatagramPacket datagramPacket) {
+
+    public UDPReceiver(DatagramSocket socket, DatagramPacket datagramPacket) {
+        this.socket = socket;
         this.datagramPacket = datagramPacket;
     }
 
     @Override
-    public byte[] receiveMessage() {
+    public void receiveMessage() {
         try {
 
             ByteBuffer receivedBytes = ByteBuffer.wrap(datagramPacket.getData());
@@ -45,15 +50,28 @@ public class UDPReceiver implements com.ukma.nechyporchuk.network.interfaces.Rec
                     packet.put(remainder);
 
 
-                    return packet.array();
+                    receivedPackets.put(packet.array());
+                    Controller.getInstance().workWithUDPPacket(this, socket, datagramPacket);
                 }
             }
-            return null;
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //            return null;
-        } catch (BufferUnderflowException e) {
-            return null;
+        } catch (BufferUnderflowException ignored) {
+
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public byte[] poll() {
+        try {
+            byte[] result = null;
+            while (result == null)
+                result = receivedPackets.poll(Constants.POLL_TIMEOUT, TimeUnit.MILLISECONDS);
+            return result;
+        } catch (InterruptedException e) {
+            return poll();
         }
     }
 }
