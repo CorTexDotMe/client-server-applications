@@ -1,5 +1,8 @@
 package com.ukma.nechyporchuk.database;
 
+import org.sqlite.SQLiteException;
+
+import java.io.File;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -138,19 +141,23 @@ public class Database {
     }
 
     public int readGroupId(String name) {
-        return readGroup(name).getId();
+        Group group = readGroup(name);
+        return group == null ? -1 : group.getId();
     }
 
     public String readGroupDescription(String name) {
-        return readGroup(name).getDescription();
+        Group group = readGroup(name);
+        return group == null ? "" : group.getDescription();
     }
 
     public String readGroupName(int id) {
-        return readGroup(id).getName();
+        Group group = readGroup(id);
+        return group == null ? "" : group.getName();
     }
 
     public String readGroupDescription(int id) {
-        return readGroup(id).getDescription();
+        Group group = readGroup(id);
+        return group == null ? "" : group.getDescription();
     }
 
     public List<Item> readAllItems() {
@@ -270,10 +277,15 @@ public class Database {
         );
     }
 
-    public void updateItemGroup(int id, int group) {
+    public void updateItemGroup(int id, String group) {
         try {
             PreparedStatement statement = con.prepareStatement("update items set groupID=(?) where id=(?)");
-            statement.setInt(1, group);
+
+            int groupId = readGroupId(group);
+            if (groupId == -1)
+                throw new IllegalArgumentException("No such group with name: " + group);
+
+            statement.setInt(1, groupId);
             statement.setInt(2, id);
 
             statement.executeUpdate();
@@ -350,13 +362,9 @@ public class Database {
 
     public void deleteDatabase() {
         try {
-//            PreparedStatement statement = con.prepareStatement("drop database ShopDB");
-//            statement.setString(1, databaseName);
-
-            Statement statement = con.createStatement();
-            statement.executeUpdate("DROP DATABASE " + databasePath + databaseName);
-
-            statement.close();
+            File database = new File(databasePath + databaseName);
+            con.close();
+            database.delete();
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
@@ -424,6 +432,8 @@ public class Database {
             statement.executeUpdate();
 
             statement.close();
+        } catch (SQLiteException e) {
+            throw new RuntimeException(e);
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
@@ -437,8 +447,7 @@ public class Database {
 //        sqlTest.createGroup("Крупи");
 
 //        sqlTest.createGroup("Food", "You can eat it!");
-//        sqlTest.createItem("Grechka", "healthy i guess", 0, 40.0, "Kyiv-something", sqlTest.readGroup("Food").getId());
-
+//        sqlTest.createItem("Grechkaa", "healthy i guess", 0, 40.0, "Kyiv-something", sqlTest.readGroup("Food").getId());
 
         for (Group group : sqlTest.readAllGroups())
             System.out.println(group);
@@ -447,10 +456,6 @@ public class Database {
 
         for (Item item : sqlTest.readAllItems())
             System.out.println(item);
-
-        sqlTest.deleteDatabase();
-        sqlTest.readAllGroups();
-
     }
 
 

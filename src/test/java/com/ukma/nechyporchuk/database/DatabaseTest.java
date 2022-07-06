@@ -1,8 +1,11 @@
 package com.ukma.nechyporchuk.database;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.sqlite.SQLiteException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseTest {
 
@@ -21,12 +24,20 @@ class DatabaseTest {
             "InitProducer",
             0
     );
-
+    private Item existingItem = new Item(
+            0,
+            "ExistingNote",
+            "ExistingDescription",
+            100,
+            100.001,
+            "ExistingProducer",
+            0
+    );
     private static Database database;
 
     @BeforeAll
     static void createDatabase() {
-        database = new Database("TestDB");
+        database = new Database("TestDatabase1234567890");
     }
 
     @BeforeEach
@@ -40,6 +51,14 @@ class DatabaseTest {
                 initialItem.getProducer(),
                 initialItem.getGroupID()
         );
+        database.createItem(
+                existingItem.getName(),
+                existingItem.getDescription(),
+                existingItem.getAmount(),
+                existingItem.getCost(),
+                existingItem.getProducer(),
+                existingItem.getGroupID()
+        );
     }
 
     @AfterEach
@@ -52,7 +71,7 @@ class DatabaseTest {
 
     @AfterAll
     static void deleteDatabase() {
-
+        database.deleteDatabase();
     }
 
 
@@ -65,44 +84,114 @@ class DatabaseTest {
     }
 
     @Test
-    void readAllItems() {
+    void readAllGroups() {
     }
 
     @Test
-    void updateGroupName() {
-        String newName = "New name";
-        int groupID = database.readGroupID(initialGroup.getName());
-
-        database.updateGroupName(groupID, newName);
-        assertEquals(newName, database.readGroup(groupID).getName());
+    void readGroup() {
     }
 
     @Test
-    void updateGroupDescription() {
+    void testReadGroup() {
     }
 
     @Test
-    void updateItemName() {
+    void readGroupId() {
     }
 
     @Test
-    void updateItemDescription() {
+    void readGroupDescription() {
     }
 
     @Test
-    void updateItemAmount() {
+    void readGroupName() {
     }
 
     @Test
-    void updateItemCost() {
+    void testReadGroupDescription() {
     }
 
     @Test
-    void updateItemProducer() {
+    void readItem() {
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "New name", ")($U@Y!$@!$DD"})
+    void updateGroupName(String newName) {
+        int groupId = database.readGroupId(initialGroup.getName());
+
+        database.updateGroupName(groupId, newName);
+        assertEquals(newName, database.readGroup(groupId).getName());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "New name", ")($U@Y!$@!$DD"})
+    void updateGroupDescription(String newDescription) {
+        int groupId = database.readGroupId(initialGroup.getName());
+
+        database.updateGroupDescription(groupId, newDescription);
+        assertEquals(newDescription, database.readGroup(groupId).getDescription());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"initialNote", "", "New name", ")($U@Y!$@!$DD"})
+    void updateItemName(String newName) {
+        int itemId = database.readItemId(initialItem.getName());
+
+        database.updateItemName(itemId, newName);
+        assertEquals(newName, database.readItem(itemId).getName());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"ExistingNote"})
+    void updateItemNameWithExisting(String newName) {
+        int itemId = database.readItemId(initialItem.getName());
+
+        assertThrows(RuntimeException.class, () -> database.updateItemName(itemId, newName));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "New name", ")($U@Y!$@!$DD"})
+    void updateItemDescription(String newDescription) {
+        int itemId = database.readItemId(initialItem.getName());
+
+        database.updateItemDescription(itemId, newDescription);
+        assertEquals(newDescription, database.readItem(itemId).getDescription());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 100, 1000, -100, 0})
+    void updateItemAmount(int newAmount) {
+        int itemId = database.readItemId(initialItem.getName());
+
+        database.updateItemAmount(itemId, newAmount);
+        assertEquals(newAmount, database.readItem(itemId).getAmount());
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, 100.0123, 1000.999999, -100, 0.000000001})
+    void updateItemCost(double newCost) {
+        int itemId = database.readItemId(initialItem.getName());
+
+        database.updateItemCost(itemId, newCost);
+        assertEquals(newCost, database.readItem(itemId).getCost());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "New name", ")($U@Y!$@!$DD"})
+    void updateItemProducer(String newProducer) {
+        int itemId = database.readItemId(initialItem.getName());
+
+        database.updateItemProducer(itemId, newProducer);
+        assertEquals(newProducer, database.readItem(itemId).getProducer());
     }
 
     @Test
     void updateItemGroup() {
+        int itemId = database.readItemId(initialItem.getName());
+
+        database.updateItemGroup(itemId, initialGroup.getName());
+        assertEquals(database.readGroupId(initialGroup.getName()), database.readItem(itemId).getGroupID());
     }
 
     @Test
@@ -119,5 +208,17 @@ class DatabaseTest {
 
     @Test
     void listItemsByProducer() {
+    }
+
+    @Test
+    void testReadItem() {
+    }
+
+    @Test
+    void readItemId() {
+    }
+
+    @Test
+    void readItemName() {
     }
 }
