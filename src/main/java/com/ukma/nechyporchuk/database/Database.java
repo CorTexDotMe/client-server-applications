@@ -21,14 +21,14 @@ public class Database {
 
             String createGroupQuery = "create table if not exists 'groups' (" +
                                       "'id' integer primary key AUTOINCREMENT, " +
-                                      "'name' text, " +
+                                      "'name' text unique, " +
                                       "'description' text" +
                                       ");";
             PreparedStatement groupTableStatement = con.prepareStatement(createGroupQuery);
 
             String createItemsQuery = "create table if not exists 'items' (" +
                                       "'id' integer primary key AUTOINCREMENT, " +
-                                      "'name' text, " +
+                                      "'name' text unique, " +
                                       "'description' text, " +
                                       "'amount' integer, " +
                                       "'cost' double, " +
@@ -115,21 +115,8 @@ public class Database {
         try {
             PreparedStatement statement = con.prepareStatement("select * from groups where name=(?)");
             statement.setString(1, name);
-            ResultSet results = statement.executeQuery();
 
-            LinkedList<Group> resultList = new LinkedList<>();
-            while (results.next())
-                resultList.add(
-                        new Group(
-                                results.getInt("id"),
-                                results.getString("name"),
-                                results.getString("description")
-                        )
-                );
-
-            results.close();
-            statement.close();
-            return resultList.element();
+            return readGroup(statement);
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
@@ -141,21 +128,8 @@ public class Database {
         try {
             PreparedStatement statement = con.prepareStatement("select * from groups where id=(?)");
             statement.setInt(1, id);
-            ResultSet results = statement.executeQuery();
 
-            LinkedList<Group> resultList = new LinkedList<>();
-            while (results.next())
-                resultList.add(
-                        new Group(
-                                results.getInt("id"),
-                                results.getString("name"),
-                                results.getString("description")
-                        )
-                );
-
-            results.close();
-            statement.close();
-            return resultList.element();
+            return readGroup(statement);
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
@@ -163,8 +137,20 @@ public class Database {
         }
     }
 
-    public int readGroupID(String name) {
+    public int readGroupId(String name) {
         return readGroup(name).getId();
+    }
+
+    public String readGroupDescription(String name) {
+        return readGroup(name).getDescription();
+    }
+
+    public String readGroupName(int id) {
+        return readGroup(id).getName();
+    }
+
+    public String readGroupDescription(int id) {
+        return readGroup(id).getDescription();
     }
 
     public List<Item> readAllItems() {
@@ -172,23 +158,7 @@ public class Database {
             Statement statement = con.createStatement();
             ResultSet results = statement.executeQuery("select * from items");
 
-            LinkedList<Item> resultList = new LinkedList<>();
-            while (results.next())
-                resultList.add(
-                        new Item(
-                                results.getInt("id"),
-                                results.getString("name"),
-                                results.getString("description"),
-                                results.getInt("amount"),
-                                results.getDouble("cost"),
-                                results.getString("producer"),
-                                results.getInt("groupID")
-                        )
-                );
-
-            results.close();
-            statement.close();
-            return resultList;
+            return getItems(results);
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
@@ -200,25 +170,8 @@ public class Database {
         try {
             PreparedStatement statement = con.prepareStatement("select * from items where name=(?)");
             statement.setString(1, name);
-            ResultSet results = statement.executeQuery();
 
-            LinkedList<Item> resultList = new LinkedList<>();
-            while (results.next())
-                resultList.add(
-                        new Item(
-                                results.getInt("id"),
-                                results.getString("name"),
-                                results.getString("description"),
-                                results.getInt("amount"),
-                                results.getDouble("cost"),
-                                results.getString("producer"),
-                                results.getInt("groupID")
-                        )
-                );
-
-            results.close();
-            statement.close();
-            return resultList.element();
+            return readItem(statement);
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
@@ -226,73 +179,62 @@ public class Database {
         }
     }
 
-    public int readItemID(String name) {
+    public Item readItem(int id) {
+        try {
+            PreparedStatement statement = con.prepareStatement("select * from items where id=(?)");
+            statement.setInt(1, id);
+
+            return readItem(statement);
+        } catch (SQLException e) {
+            System.out.println("Не вірний SQL запит на вставку");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public int readItemId(String name) {
         return readItem(name).getId();
     }
 
+    public String readItemName(int id) {
+        return readItem(id).getName();
+    }
+
     public void updateGroupName(int id, String name) {
-        try {
-            PreparedStatement statement = con.prepareStatement("update groups set name=(?) where id=(?)");
-            statement.setString(1, name);
-            statement.setInt(2, id);
-
-            statement.executeUpdate();
-
-            statement.close();
-        } catch (SQLException e) {
-            System.out.println("Не вірний SQL запит на вставку");
-            e.printStackTrace();
-        }
+        updateString(
+                "update groups set name=(?) where id=(?)",
+                id,
+                name
+        );
     }
 
     public void updateGroupDescription(int id, String description) {
-        try {
-            PreparedStatement statement = con.prepareStatement("update groups set description=(?) where id=(?)");
-            statement.setString(1, description);
-            statement.setInt(2, id);
-
-            statement.executeUpdate();
-
-            statement.close();
-        } catch (SQLException e) {
-            System.out.println("Не вірний SQL запит на вставку");
-            e.printStackTrace();
-        }
+        updateString(
+                "update groups set description=(?) where id=(?)",
+                id,
+                description
+        );
     }
 
     public void updateItemName(int id, String name) {
-        try {
-            PreparedStatement statement = con.prepareStatement("update groups set name=(?) where id=(?)");
-            statement.setString(1, name);
-            statement.setInt(2, id);
-
-            statement.executeUpdate();
-
-            statement.close();
-        } catch (SQLException e) {
-            System.out.println("Не вірний SQL запит на вставку");
-            e.printStackTrace();
-        }
+        updateString(
+                "update items set name=(?) where id=(?)",
+                id,
+                name
+        );
     }
 
     public void updateItemDescription(int id, String description) {
-        try {
-            PreparedStatement statement = con.prepareStatement("update groups set description=(?) where id=(?)");
-            statement.setString(1, description);
-            statement.setInt(2, id);
-
-            statement.executeUpdate();
-
-            statement.close();
-        } catch (SQLException e) {
-            System.out.println("Не вірний SQL запит на вставку");
-            e.printStackTrace();
-        }
+        updateString(
+                "update items set description=(?) where id=(?)",
+                id,
+                description
+        );
     }
 
     public void updateItemAmount(int id, int amount) {
         try {
-            PreparedStatement statement = con.prepareStatement("update groups set amount=(?) where id=(?)");
+            PreparedStatement statement = con.prepareStatement("update items set amount=(?) where id=(?)");
             statement.setInt(1, amount);
             statement.setInt(2, id);
 
@@ -307,7 +249,7 @@ public class Database {
 
     public void updateItemCost(int id, double cost) {
         try {
-            PreparedStatement statement = con.prepareStatement("update groups set cost=(?) where id=(?)");
+            PreparedStatement statement = con.prepareStatement("update items set cost=(?) where id=(?)");
             statement.setDouble(1, cost);
             statement.setInt(2, id);
 
@@ -321,23 +263,16 @@ public class Database {
     }
 
     public void updateItemProducer(int id, String producer) {
-        try {
-            PreparedStatement statement = con.prepareStatement("update groups set producer=(?) where id=(?)");
-            statement.setString(1, producer);
-            statement.setInt(2, id);
-
-            statement.executeUpdate();
-
-            statement.close();
-        } catch (SQLException e) {
-            System.out.println("Не вірний SQL запит на вставку");
-            e.printStackTrace();
-        }
+        updateString(
+                "update items set producer=(?) where id=(?)",
+                id,
+                producer
+        );
     }
 
     public void updateItemGroup(int id, int group) {
         try {
-            PreparedStatement statement = con.prepareStatement("update groups set groupID=(?) where id=(?)");
+            PreparedStatement statement = con.prepareStatement("update items set groupID=(?) where id=(?)");
             statement.setInt(1, group);
             statement.setInt(2, id);
 
@@ -387,21 +322,7 @@ public class Database {
             statement.setInt(1, id);
             ResultSet results = statement.executeQuery();
 
-            LinkedList<Item> resultList = new LinkedList<>();
-            while (results.next())
-                resultList.add(
-                        new Item(
-                                results.getInt("id"),
-                                results.getString("name"),
-                                results.getString("description"),
-                                results.getInt("amount"),
-                                results.getDouble("cost"),
-                                results.getString("producer"),
-                                results.getInt("groupID")
-                        )
-                );
-
-            results.close();
+            LinkedList<Item> resultList = getItems(results);
             statement.close();
             return resultList;
         } catch (SQLException e) {
@@ -417,21 +338,7 @@ public class Database {
             statement.setString(1, producer);
             ResultSet results = statement.executeQuery();
 
-            LinkedList<Item> resultList = new LinkedList<>();
-            while (results.next())
-                resultList.add(
-                        new Item(
-                                results.getInt("id"),
-                                results.getString("name"),
-                                results.getString("description"),
-                                results.getInt("amount"),
-                                results.getDouble("cost"),
-                                results.getString("producer"),
-                                results.getInt("groupID")
-                        )
-                );
-
-            results.close();
+            LinkedList<Item> resultList = getItems(results);
             statement.close();
             return resultList;
         } catch (SQLException e) {
@@ -448,6 +355,73 @@ public class Database {
 
             Statement statement = con.createStatement();
             statement.executeUpdate("DROP DATABASE " + databasePath + databaseName);
+
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("Не вірний SQL запит на вставку");
+            e.printStackTrace();
+        }
+    }
+
+    private LinkedList<Item> getItems(ResultSet results) throws SQLException {
+        LinkedList<Item> resultList = new LinkedList<>();
+        while (results.next())
+            resultList.add(
+                    new Item(
+                            results.getInt("id"),
+                            results.getString("name"),
+                            results.getString("description"),
+                            results.getInt("amount"),
+                            results.getDouble("cost"),
+                            results.getString("producer"),
+                            results.getInt("groupID")
+                    )
+            );
+
+        results.close();
+        return resultList;
+    }
+
+    private Group readGroup(PreparedStatement statement) throws SQLException {
+        ResultSet results = statement.executeQuery();
+
+        Group resultGroup = new Group(
+                results.getInt("id"),
+                results.getString("name"),
+                results.getString("description")
+        );
+
+        results.close();
+        statement.close();
+        return resultGroup;
+    }
+
+    private Item readItem(PreparedStatement statement) throws SQLException {
+        ResultSet results = statement.executeQuery();
+
+        Item resultItem = new Item(
+                results.getInt("id"),
+                results.getString("name"),
+                results.getString("description"),
+                results.getInt("amount"),
+                results.getDouble("cost"),
+                results.getString("producer"),
+                results.getInt("groupID")
+        );
+
+
+        results.close();
+        statement.close();
+        return resultItem;
+    }
+
+    private void updateString(String query, int id, String string) {
+        try {
+            PreparedStatement statement = con.prepareStatement(query);
+            statement.setString(1, string);
+            statement.setInt(2, id);
+
+            statement.executeUpdate();
 
             statement.close();
         } catch (SQLException e) {
