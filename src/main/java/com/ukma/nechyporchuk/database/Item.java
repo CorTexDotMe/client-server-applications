@@ -1,5 +1,7 @@
 package com.ukma.nechyporchuk.database;
 
+import java.util.Objects;
+
 public class Item {
     private int id;
     private String name;
@@ -55,5 +57,18 @@ public class Item {
                "\tCost: " + cost + '\n' +
                "\tProducer: " + producer + '\n' +
                "\tGroupID: " + groupID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return amount == item.amount && Double.compare(item.cost, cost) == 0 && name.equals(item.name) && description.equals(item.description) && producer.equals(item.producer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, amount, cost, producer, groupID);
     }
 }

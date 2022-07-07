@@ -70,7 +70,7 @@ public class Database {
     public void createItem(String name, String description, int amount, double cost, String producer, int groupID) {
         try {
             PreparedStatement statement = con.prepareStatement(
-                    "insert into items(name, description, amount, cost, groupID, producer) values (?,?,?,?,?,?);"
+                    "insert into items(name, description, amount, cost, producer, groupID) values (?,?,?,?,?,?);"
             );
             statement.setString(1, name);
             statement.setString(2, description);
@@ -89,29 +89,8 @@ public class Database {
     }
 
     public List<Group> readAllGroups() {
-        try {
-            Statement st = con.createStatement();
-            ResultSet res = st.executeQuery("select * from groups");
-
-            LinkedList<Group> resultList = new LinkedList<>();
-            while (res.next())
-                resultList.add(
-                        new Group(
-                                res.getInt("id"),
-                                res.getString("name"),
-                                res.getString("description")
-                        )
-                );
-
-
-            res.close();
-            st.close();
-            return resultList;
-        } catch (SQLException e) {
-            System.out.println("Не вірний SQL запит на вибірку даних");
-            e.printStackTrace();
-            return new LinkedList<>();
-        }
+        String query = "select * from groups";
+        return getGroups(query);
     }
 
     public Group readGroup(String name) {
@@ -330,7 +309,7 @@ public class Database {
 
     public List<Item> listItemsByGroup(int id) {
         try {
-            PreparedStatement statement = con.prepareStatement("select * from items where id=(?)");
+            PreparedStatement statement = con.prepareStatement("select * from items where groupId=(?)");
             statement.setInt(1, id);
             ResultSet results = statement.executeQuery();
 
@@ -344,10 +323,16 @@ public class Database {
         }
     }
 
-    public List<Item> listItemsByProducer(String producer) {
+    public List<Item> listItemsByGroupInOrder(int id, boolean ascending) {
         try {
-            PreparedStatement statement = con.prepareStatement("select * from items where producer=(?)");
-            statement.setString(1, producer);
+            String query = "select * from items where groupId=(?) ORDER BY name ";
+            if (ascending)
+                query += "asc";
+            else
+                query += "desc";
+
+            PreparedStatement statement = con.prepareStatement(query);
+            statement.setInt(1, id);
             ResultSet results = statement.executeQuery();
 
             LinkedList<Item> resultList = getItems(results);
@@ -358,6 +343,14 @@ public class Database {
             e.printStackTrace();
             return new LinkedList<>();
         }
+    }
+
+    public List<Item> listItemsByNameInOrder(boolean ascending) {
+        String query = "select * from items ORDER BY name ";
+        if (ascending)
+            return listWithOrder(query + "asc");
+        else
+            return listWithOrder(query + "desc");
     }
 
     public void deleteDatabase() {
@@ -373,7 +366,7 @@ public class Database {
 
     private LinkedList<Item> getItems(ResultSet results) throws SQLException {
         LinkedList<Item> resultList = new LinkedList<>();
-        while (results.next())
+        while (results.next()) {
             resultList.add(
                     new Item(
                             results.getInt("id"),
@@ -385,9 +378,35 @@ public class Database {
                             results.getInt("groupID")
                     )
             );
-
+        }
         results.close();
         return resultList;
+    }
+
+    private LinkedList<Group> getGroups(String query) {
+        try {
+            Statement st = con.createStatement();
+            ResultSet res = st.executeQuery(query);
+
+            LinkedList<Group> resultList = new LinkedList<>();
+            while (res.next())
+                resultList.add(
+                        new Group(
+                                res.getInt("id"),
+                                res.getString("name"),
+                                res.getString("description")
+                        )
+                );
+
+
+            res.close();
+            st.close();
+            return resultList;
+        } catch (SQLException e) {
+            System.out.println("Не вірний SQL запит на вибірку даних");
+            e.printStackTrace();
+            return new LinkedList<>();
+        }
     }
 
     private Group readGroup(PreparedStatement statement) throws SQLException {
@@ -440,13 +459,28 @@ public class Database {
         }
     }
 
+    private List<Item> listWithOrder(String query) {
+        try {
+            PreparedStatement statement = con.prepareStatement(query);
+            ResultSet results = statement.executeQuery();
+
+            LinkedList<Item> resultList = getItems(results);
+            statement.close();
+            return resultList;
+        } catch (SQLException e) {
+            System.out.println("Не вірний SQL запит на вставку");
+            e.printStackTrace();
+            return new LinkedList<>();
+        }
+    }
+
     public static void main(String[] args) {
         Database sqlTest = new Database("ShopDB");
 //        sqlTest.insertTestData("SuperMAKAKA");
 //        sqlTest.insertTestData("NewMAKAKA");
 //        sqlTest.createGroup("Крупи");
 
-//        sqlTest.createGroup("Food", "You can eat it!");
+//        sqlTest.createGroup("AAA", "You can eat it! I guess");
 //        sqlTest.createItem("Grechkaa", "healthy i guess", 0, 40.0, "Kyiv-something", sqlTest.readGroup("Food").getId());
 
         for (Group group : sqlTest.readAllGroups())

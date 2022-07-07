@@ -1,5 +1,7 @@
 package com.ukma.nechyporchuk.database;
 
+import java.util.Objects;
+
 public class Group {
     private int id;
     private String name;
@@ -27,5 +29,18 @@ public class Group {
     public String toString() {
         return id + ". " + name + '\n' +
                "\tDescription: " + description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Group group = (Group) o;
+        return name.equals(group.name) && description.equals(group.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description);
     }
 }
