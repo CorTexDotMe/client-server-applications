@@ -9,16 +9,16 @@ public class Item {
     private int amount;
     private double cost;
     private String producer;
-    private int groupID;
+    private int groupId;
 
-    public Item(int id, String name, String description, int amount, double cost, String producer, int groupID) {
+    public Item(int id, String name, String description, int amount, double cost, String producer, int groupId) {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.amount = amount;
         this.cost = cost;
         this.producer = producer;
-        this.groupID = groupID;
-        this.description = description;
+        this.groupId = groupId;
     }
 
     public int getId() {
@@ -41,12 +41,16 @@ public class Item {
         return producer;
     }
 
-    public int getGroupID() {
-        return groupID;
+    public int getGroupId() {
+        return groupId;
     }
 
     public String getDescription() {
         return description;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 
     @Override
@@ -56,7 +60,7 @@ public class Item {
                "\tAmount: " + amount + '\n' +
                "\tCost: " + cost + '\n' +
                "\tProducer: " + producer + '\n' +
-               "\tGroupID: " + groupID;
+               "\tGroupID: " + groupId;
     }
 
     @Override
@@ -69,6 +73,6 @@ public class Item {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, amount, cost, producer, groupID);
+        return Objects.hash(name, description, amount, cost, producer, groupId);
     }
 }

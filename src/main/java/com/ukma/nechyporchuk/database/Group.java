@@ -2,7 +2,7 @@ package com.ukma.nechyporchuk.database;
 
 import java.util.Objects;
 
-public class Group {
+public class Group{
     private int id;
     private String name;
     private String description;

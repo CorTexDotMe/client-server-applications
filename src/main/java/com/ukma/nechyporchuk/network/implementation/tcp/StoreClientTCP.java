@@ -58,6 +58,15 @@ public class StoreClientTCP {
         }
     }
 
+    public byte[] receiveMessageBytes() {
+        try {
+            return readPacket();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private byte[] readPacket() throws IOException {
         byte bMagic;
         do {

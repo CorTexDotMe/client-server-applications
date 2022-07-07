@@ -36,7 +36,7 @@ public class Database {
                                       "'amount' integer, " +
                                       "'cost' double, " +
                                       "'producer' text, " +
-                                      "'groupID' integer" +
+                                      "'groupId' integer" +
                                       ");";
             PreparedStatement itemTableStatement = con.prepareStatement(createItemsQuery);
 
@@ -67,17 +67,17 @@ public class Database {
         }
     }
 
-    public void createItem(String name, String description, int amount, double cost, String producer, int groupID) {
+    public void createItem(String name, String description, int amount, double cost, String producer, int groupId) {
         try {
             PreparedStatement statement = con.prepareStatement(
-                    "insert into items(name, description, amount, cost, producer, groupID) values (?,?,?,?,?,?);"
+                    "insert into items(name, description, amount, cost, producer, groupId) values (?,?,?,?,?,?);"
             );
             statement.setString(1, name);
             statement.setString(2, description);
             statement.setInt(3, amount);
             statement.setDouble(4, cost);
             statement.setString(5, producer);
-            statement.setInt(6, groupID);
+            statement.setInt(6, groupId);
 
             int result = statement.executeUpdate();
 
@@ -86,6 +86,10 @@ public class Database {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
         }
+    }
+
+    public void createItem(String name, String description, int amount, double cost, String producer, String group) {
+        createItem(name, description, amount, cost, producer, readGroupId(group));
     }
 
     public List<Group> readAllGroups() {
@@ -258,7 +262,7 @@ public class Database {
 
     public void updateItemGroup(int id, String group) {
         try {
-            PreparedStatement statement = con.prepareStatement("update items set groupID=(?) where id=(?)");
+            PreparedStatement statement = con.prepareStatement("update items set groupId=(?) where id=(?)");
 
             int groupId = readGroupId(group);
             if (groupId == -1)
@@ -375,7 +379,7 @@ public class Database {
                             results.getInt("amount"),
                             results.getDouble("cost"),
                             results.getString("producer"),
-                            results.getInt("groupID")
+                            results.getInt("groupId")
                     )
             );
         }
@@ -433,7 +437,7 @@ public class Database {
                 results.getInt("amount"),
                 results.getDouble("cost"),
                 results.getString("producer"),
-                results.getInt("groupID")
+                results.getInt("groupId")
         );
 
 

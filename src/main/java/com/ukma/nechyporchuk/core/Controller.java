@@ -79,7 +79,7 @@ public class Controller {
         );
 
         // Sending
-        sender.sendMessage(responsePacket.getPacket());
+        sender.sendMessage(responsePacket.getBytes());
     }
 
 

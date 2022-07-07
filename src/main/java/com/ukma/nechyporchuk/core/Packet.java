@@ -130,7 +130,7 @@ public class Packet {
 
     }
 
-    public byte[] getPacket() {
+    public byte[] getBytes() {
         return packet;
     }
 

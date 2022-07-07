@@ -84,7 +84,7 @@ public class StoreServerTCP {
         }
 
         private void sendEndResponse() throws IOException {
-            out.write(new Packet((byte) 0, 0L, new Message(0, 0, "good bye".getBytes())).getPacket());
+            out.write(new Packet((byte) 0, 0L, new Message(0, 0, "good bye".getBytes())).getBytes());
         }
     }
 

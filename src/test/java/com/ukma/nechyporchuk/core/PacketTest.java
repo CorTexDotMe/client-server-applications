@@ -1,7 +1,5 @@
 package com.ukma.nechyporchuk.core;
 
-import com.ukma.nechyporchuk.core.Message;
-import com.ukma.nechyporchuk.core.Packet;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -18,12 +16,12 @@ class PacketTest {
     static void initialize() {
         packetSent = new Packet((byte) 1, 15, new Message(100, 10, "Ukulele".getBytes()));
 
-        packetReceived = new Packet(packetSent.getPacket());
+        packetReceived = new Packet(packetSent.getBytes());
     }
 
     @Test
     void getPacket() {
-        assertEquals(packetSent.getPacket(), packetReceived.getPacket());
+        assertEquals(packetSent.getBytes(), packetReceived.getBytes());
     }
 
     @Test
@@ -69,7 +67,7 @@ class PacketTest {
     @Test
     void wrongSRC() {
         assertThrows(IllegalArgumentException.class, () -> {
-            byte[] wrongSrcPacket = packetSent.getPacket();
+            byte[] wrongSrcPacket = packetSent.getBytes();
             wrongSrcPacket[1] = (byte) ((int) packetSent.getBSrc() + 1);
 
             packetReceived = new Packet(wrongSrcPacket);
@@ -79,7 +77,7 @@ class PacketTest {
     @Test
     void wrongPktId() {
         assertThrows(IllegalArgumentException.class, () -> {
-            ByteBuffer wrongPktIdPacket = ByteBuffer.wrap(packetSent.getPacket());
+            ByteBuffer wrongPktIdPacket = ByteBuffer.wrap(packetSent.getBytes());
             wrongPktIdPacket.putLong(2, (packetSent.getBPktId() + 1));
 
             packetReceived = new Packet(wrongPktIdPacket.array());
@@ -89,7 +87,7 @@ class PacketTest {
     @Test
     void wrongLen() {
         assertThrows(IllegalArgumentException.class, () -> {
-            ByteBuffer wrongLenPacket = ByteBuffer.wrap(packetSent.getPacket());
+            ByteBuffer wrongLenPacket = ByteBuffer.wrap(packetSent.getBytes());
             wrongLenPacket.putInt(10, (packetSent.getWLen() + 1));
 
             packetReceived = new Packet(wrongLenPacket.array());
@@ -99,7 +97,7 @@ class PacketTest {
     @Test
     void wrongMsg() {
         assertThrows(IllegalArgumentException.class, () -> {
-            ByteBuffer wrongMsgPacket = ByteBuffer.wrap(packetSent.getPacket());
+            ByteBuffer wrongMsgPacket = ByteBuffer.wrap(packetSent.getBytes());
             wrongMsgPacket.put(17, (byte) ((int) wrongMsgPacket.get(17) + 1));
 
             packetReceived = new Packet(wrongMsgPacket.array());

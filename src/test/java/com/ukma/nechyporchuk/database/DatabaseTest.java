@@ -3,7 +3,6 @@ package com.ukma.nechyporchuk.database;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.sqlite.SQLiteException;
 
 import java.util.*;
 
@@ -107,7 +106,7 @@ class DatabaseTest {
                 newItem.getAmount(),
                 newItem.getCost(),
                 newItem.getProducer(),
-                newItem.getGroupID()
+                newItem.getGroupId()
         );
         item = database.readItem(newItem.getName());
         assertEquals(item, newItem);
@@ -262,7 +261,7 @@ class DatabaseTest {
         int itemId = database.readItemId(initialItem.getName());
 
         database.updateItemGroup(itemId, initialGroup.getName());
-        assertEquals(database.readGroupId(initialGroup.getName()), database.readItem(itemId).getGroupID());
+        assertEquals(database.readGroupId(initialGroup.getName()), database.readItem(itemId).getGroupId());
     }
 
     @Test
@@ -293,7 +292,7 @@ class DatabaseTest {
 
         database.createItem("", "", 0, 0, "", -1);
         List<Item> itemList = database.readAllItems().stream().filter(
-                item -> item.getGroupID() == groupId
+                item -> item.getGroupId() == groupId
         ).toList();
 
         assertEquals(itemList, database.listItemsByGroup(groupId));
@@ -314,12 +313,12 @@ class DatabaseTest {
     void orderByGroup() {
         database.createGroup("", "");
         Item item = new Item(0, "test", "", 0, 0, "", database.readGroupId(""));
-        database.createItem(item.getName(), item.getDescription(), item.getAmount(), item.getCost(), item.getProducer(), item.getGroupID());
+        database.createItem(item.getName(), item.getDescription(), item.getAmount(), item.getCost(), item.getProducer(), item.getGroupId());
 
         int groupId = database.readGroupId(initialGroup.getName());
         database.createItem("", "", 0, 0, "", -1);
         List<Item> itemList = new ArrayList<>(database.readAllItems().stream().filter(
-                element -> element.getGroupID() == groupId
+                element -> element.getGroupId() == groupId
         ).toList());
 
         itemList.sort(Comparator.comparing(Item::getName));
