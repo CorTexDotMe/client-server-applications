@@ -1,6 +1,6 @@
 package com.ukma.nechyporchuk.network.implementation.udp;
 
-import com.ukma.nechyporchuk.core.Packet;
+import com.ukma.nechyporchuk.core.entities.Packet;
 import com.ukma.nechyporchuk.network.interfaces.Receiver;
 import com.ukma.nechyporchuk.utils.Constants;
 

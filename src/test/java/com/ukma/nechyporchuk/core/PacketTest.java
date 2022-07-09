@@ -1,5 +1,7 @@
 package com.ukma.nechyporchuk.core;
 
+import com.ukma.nechyporchuk.core.entities.Message;
+import com.ukma.nechyporchuk.core.entities.Packet;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

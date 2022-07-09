@@ -1,5 +1,7 @@
 package com.ukma.nechyporchuk.core;
 
+import com.ukma.nechyporchuk.core.entities.Message;
+import com.ukma.nechyporchuk.core.entities.Packet;
 import com.ukma.nechyporchuk.network.implementation.tcp.TCPSender;
 import com.ukma.nechyporchuk.network.implementation.udp.UDPSender;
 import com.ukma.nechyporchuk.network.interfaces.Receiver;

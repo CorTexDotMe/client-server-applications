@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.core;
+package com.ukma.nechyporchuk.core.entities;
 
 import com.ukma.nechyporchuk.security.Decryptor;
 import com.ukma.nechyporchuk.security.Encryptor;
