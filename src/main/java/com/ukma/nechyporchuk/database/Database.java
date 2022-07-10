@@ -22,12 +22,12 @@ public class Database {
             Class.forName("org.sqlite.JDBC");
             con = DriverManager.getConnection("jdbc:sqlite:" + databasePath + databaseName);
 
-            String createGroupQuery = "create table if not exists 'groups' (" +
-                                      "'id' integer primary key AUTOINCREMENT, " +
-                                      "'name' text unique, " +
-                                      "'description' text" +
-                                      ");";
-            PreparedStatement groupTableStatement = con.prepareStatement(createGroupQuery);
+            String createGroupsQuery = "create table if not exists 'groups' (" +
+                                       "'id' integer primary key AUTOINCREMENT, " +
+                                       "'name' text unique, " +
+                                       "'description' text" +
+                                       ");";
+            PreparedStatement groupsTableStatement = con.prepareStatement(createGroupsQuery);
 
             String createItemsQuery = "create table if not exists 'items' (" +
                                       "'id' integer primary key AUTOINCREMENT, " +
@@ -38,10 +38,18 @@ public class Database {
                                       "'producer' text, " +
                                       "'groupId' integer" +
                                       ");";
-            PreparedStatement itemTableStatement = con.prepareStatement(createItemsQuery);
+            PreparedStatement itemsTableStatement = con.prepareStatement(createItemsQuery);
 
-            int resultFirst = groupTableStatement.executeUpdate();
-            int resultSecond = itemTableStatement.executeUpdate();
+            String createUsersQuery = "create table if not exists 'users' (" +
+                                      "'id' integer primary key AUTOINCREMENT, " +
+                                      "'login' text unique, " +
+                                      "'password' text" +
+                                      ");";
+            PreparedStatement usersTableStatement = con.prepareStatement(createUsersQuery);
+
+            int resultGroups = groupsTableStatement.executeUpdate();
+            int resultItems = itemsTableStatement.executeUpdate();
+            int resultUsers = usersTableStatement.executeUpdate();
         } catch (ClassNotFoundException e) {
             System.out.println("Не знайшли драйвер JDBC");
             e.printStackTrace();
@@ -50,6 +58,66 @@ public class Database {
             System.out.println("Не вірний SQL запит");
             e.printStackTrace();
         }
+    }
+
+    public void createUser(String login, String password) {
+        try {
+            PreparedStatement statement = con.prepareStatement("insert into users(login, password) values (?,?)");
+            statement.setString(1, login);
+            statement.setString(2, password);
+
+            int result = statement.executeUpdate();
+
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("Не вірний SQL запит на вставку");
+            e.printStackTrace();
+        }
+    }
+
+    public User readUser(String login) {
+        try {
+            PreparedStatement statement = con.prepareStatement("select * from users where login=(?)");
+            statement.setString(1, login);
+
+            ResultSet results = statement.executeQuery();
+
+            User resultUser = new User(
+                    results.getString("login"),
+                    results.getString("password")
+            );
+
+            results.close();
+            statement.close();
+            return resultUser;
+        } catch (SQLException e) {
+            System.out.println("Не вірний SQL запит на вставку");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void deleteUser(String login) {
+        try {
+            PreparedStatement statement = con.prepareStatement("delete from users where login=(?)");
+            statement.setString(1, login);
+
+            statement.executeUpdate();
+
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("Не вірний SQL запит на вставку");
+            e.printStackTrace();
+        }
+    }
+
+    public boolean containsUser(String login, String password) {
+        User user = readUser(login);
+        return user != null && user.getPassword().equals(password);
+    }
+
+    public boolean containsLogin(String login) {
+        return readUser(login) != null;
     }
 
     public void createGroup(String name, String description) {
@@ -67,7 +135,7 @@ public class Database {
         }
     }
 
-    public void createItem(String name, String description, int amount, double cost, String producer, int groupId) {
+    public boolean createItem(String name, String description, int amount, double cost, String producer, int groupId) {
         try {
             PreparedStatement statement = con.prepareStatement(
                     "insert into items(name, description, amount, cost, producer, groupId) values (?,?,?,?,?,?);"
@@ -82,14 +150,27 @@ public class Database {
             int result = statement.executeUpdate();
 
             statement.close();
+            return true;
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
+            return false;
         }
     }
 
-    public void createItem(String name, String description, int amount, double cost, String producer, String group) {
-        createItem(name, description, amount, cost, producer, readGroupId(group));
+    public boolean createItem(Item item) {
+        return createItem(
+                item.getName(),
+                item.getDescription(),
+                item.getAmount(),
+                item.getCost(),
+                item.getProducer(),
+                item.getGroupId()
+        );
+    }
+
+    public boolean createItem(String name, String description, int amount, double cost, String producer, String group) {
+        return createItem(name, description, amount, cost, producer, readGroupId(group));
     }
 
     public List<Group> readAllGroups() {
@@ -297,7 +378,7 @@ public class Database {
         }
     }
 
-    public void deleteItem(int id) {
+    public boolean deleteItem(int id) {
         try {
             PreparedStatement statement = con.prepareStatement("delete from items where id=(?)");
             statement.setInt(1, id);
@@ -305,9 +386,11 @@ public class Database {
             statement.executeUpdate();
 
             statement.close();
+            return true;
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -480,12 +563,18 @@ public class Database {
 
     public static void main(String[] args) {
         Database sqlTest = new Database("ShopDB");
+//        Database sqlTest = new Database("Shop database");
 //        sqlTest.insertTestData("SuperMAKAKA");
 //        sqlTest.insertTestData("NewMAKAKA");
 //        sqlTest.createGroup("Крупи");
 
 //        sqlTest.createGroup("AAA", "You can eat it! I guess");
 //        sqlTest.createItem("Grechkaa", "healthy i guess", 0, 40.0, "Kyiv-something", sqlTest.readGroup("Food").getId());
+
+//        sqlTest.createUser("1WtpmDDne6U4VWecsdJS2g==", "X03MO1qnZdYdgyfeuILPmQ==");
+
+//        sqlTest.createItem("Cookie", "obviously tasty", 10, 30.0, "Kyiv-something", sqlTest.readGroup("Food").getId());
+
 
         for (Group group : sqlTest.readAllGroups())
             System.out.println(group);

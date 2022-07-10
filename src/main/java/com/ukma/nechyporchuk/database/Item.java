@@ -11,6 +11,16 @@ public class Item {
     private String producer;
     private int groupId;
 
+    public Item() {
+        this.id = 0;
+        this.name = "";
+        this.description = "";
+        this.amount = 0;
+        this.cost = 0;
+        this.producer = "";
+        this.groupId = 0;
+    }
+
     public Item(int id, String name, String description, int amount, double cost, String producer, int groupId) {
         this.id = id;
         this.name = name;
@@ -51,6 +61,30 @@ public class Item {
 
     public void setGroupId(int groupId) {
         this.groupId = groupId;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
+    public void setProducer(String producer) {
+        this.producer = producer;
     }
 
     @Override
