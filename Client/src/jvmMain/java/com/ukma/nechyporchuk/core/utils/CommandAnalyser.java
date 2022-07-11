@@ -27,7 +27,8 @@ public class CommandAnalyser {
             SET_AMOUNT = 56,
             SET_COST = 64,
             SET_PRODUCER = 72,
-            SET_GROUP = 80;
+            SET_GROUP = 80,
+            INITIAL_PACKET = 88;
 
     public static final int
             ITEM_GET = ITEM ^ GET,

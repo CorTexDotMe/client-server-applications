@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Database {
     private Connection con;
-    private final String databasePath = "src/main/resources/";
+    private final String databasePath = "Server/src/main/resources/";
     private final String databaseName;
 
     public Database(String databaseName) {
