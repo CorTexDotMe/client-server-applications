@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.utils;
+package com.ukma.nechyporchuk.core.utils;
 
 /**
  *  Compilation:  javac CRC16.java

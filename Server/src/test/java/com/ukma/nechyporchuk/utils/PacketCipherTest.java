@@ -1,12 +1,13 @@
 package com.ukma.nechyporchuk.utils;
 
-import com.ukma.nechyporchuk.security.Decryptor;
-import com.ukma.nechyporchuk.security.Encryptor;
+import com.ukma.nechyporchuk.core.security.Decryptor;
+import com.ukma.nechyporchuk.core.security.Encryptor;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class PacketCipherTest {
 

@@ -1,7 +1,7 @@
 package com.ukma.nechyporchuk.network.implementation.udp;
 
-import com.ukma.nechyporchuk.core.Controller;
-import com.ukma.nechyporchuk.utils.Constants;
+import com.ukma.nechyporchuk.core.utils.Constants;
+import com.ukma.nechyporchuk.processor.Controller;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

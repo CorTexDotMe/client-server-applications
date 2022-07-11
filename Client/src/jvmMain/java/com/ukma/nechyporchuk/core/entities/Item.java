@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.database;
+package com.ukma.nechyporchuk.core.entities;
 
 import java.util.Objects;
 

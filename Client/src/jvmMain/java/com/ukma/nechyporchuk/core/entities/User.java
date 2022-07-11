@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.database;
+package com.ukma.nechyporchuk.core.entities;
 
 public class User {
     private String login;

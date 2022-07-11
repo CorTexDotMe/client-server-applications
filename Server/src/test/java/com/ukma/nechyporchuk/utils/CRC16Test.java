@@ -1,8 +1,9 @@
 package com.ukma.nechyporchuk.utils;
 
+import com.ukma.nechyporchuk.core.utils.CRC16;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CRC16Test {
 

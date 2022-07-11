@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.core;
+package com.ukma.nechyporchuk.processor;
 
 import com.ukma.nechyporchuk.core.entities.Message;
 import com.ukma.nechyporchuk.core.entities.Packet;

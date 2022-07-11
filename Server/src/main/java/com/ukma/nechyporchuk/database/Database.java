@@ -1,5 +1,8 @@
 package com.ukma.nechyporchuk.database;
 
+import com.ukma.nechyporchuk.core.entities.Group;
+import com.ukma.nechyporchuk.core.entities.Item;
+import com.ukma.nechyporchuk.core.entities.User;
 import org.sqlite.SQLiteException;
 
 import java.io.File;

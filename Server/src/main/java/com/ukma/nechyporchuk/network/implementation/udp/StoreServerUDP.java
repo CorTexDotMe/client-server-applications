@@ -1,6 +1,6 @@
 package com.ukma.nechyporchuk.network.implementation.udp;
 
-import com.ukma.nechyporchuk.utils.Constants;
+import com.ukma.nechyporchuk.core.utils.Constants;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

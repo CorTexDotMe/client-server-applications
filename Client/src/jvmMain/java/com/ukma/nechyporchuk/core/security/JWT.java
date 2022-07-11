@@ -1,9 +1,7 @@
-package com.ukma.nechyporchuk.security;
+package com.ukma.nechyporchuk.core.security;
 
 import io.jsonwebtoken.Jwts;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 
 public class JWT {

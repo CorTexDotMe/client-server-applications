@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.utils;
+package com.ukma.nechyporchuk.core.utils;
 
 /**
  * Because commands are sent in packet as int value, it needs to be analyzed

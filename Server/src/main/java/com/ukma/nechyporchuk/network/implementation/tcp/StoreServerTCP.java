@@ -1,9 +1,9 @@
 package com.ukma.nechyporchuk.network.implementation.tcp;
 
-import com.ukma.nechyporchuk.core.Controller;
 import com.ukma.nechyporchuk.core.entities.Message;
 import com.ukma.nechyporchuk.core.entities.Packet;
-import com.ukma.nechyporchuk.utils.Constants;
+import com.ukma.nechyporchuk.core.utils.Constants;
+import com.ukma.nechyporchuk.processor.Controller;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

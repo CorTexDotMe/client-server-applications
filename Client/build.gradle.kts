@@ -1,10 +1,10 @@
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose")
+    `java-library`
 }
 
 group = "com.ukma.nechyporchuk"
@@ -42,4 +42,19 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+dependencies {
+    api("io.jsonwebtoken:jjwt-api:0.11.5")
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.11.5") // or 'io.jsonwebtoken:jjwt-gson:0.11.5' for gson
+
+// https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+    implementation("org.xerial:sqlite-jdbc:3.36.0.3")
+// https://mvnrepository.com/artifact/org.json/json
+    implementation("org.json:json:20220320")
+// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+
 }

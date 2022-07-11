@@ -1,7 +1,7 @@
 package com.ukma.nechyporchuk.network.implementation.tcp;
 
+import com.ukma.nechyporchuk.core.utils.Constants;
 import com.ukma.nechyporchuk.network.interfaces.Receiver;
-import com.ukma.nechyporchuk.utils.Constants;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;

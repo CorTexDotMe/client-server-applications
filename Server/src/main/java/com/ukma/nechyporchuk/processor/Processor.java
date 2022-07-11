@@ -1,8 +1,8 @@
-package com.ukma.nechyporchuk.core;
+package com.ukma.nechyporchuk.processor;
 
 import com.ukma.nechyporchuk.core.entities.Message;
+import com.ukma.nechyporchuk.core.utils.CommandAnalyser;
 import com.ukma.nechyporchuk.database.Database;
-import com.ukma.nechyporchuk.utils.CommandAnalyser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

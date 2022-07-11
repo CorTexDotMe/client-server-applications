@@ -1,7 +1,6 @@
-package com.ukma.nechyporchuk.security;
+package com.ukma.nechyporchuk.core.security;
 
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -11,7 +10,6 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 

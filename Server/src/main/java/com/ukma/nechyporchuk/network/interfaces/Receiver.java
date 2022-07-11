@@ -2,7 +2,7 @@ package com.ukma.nechyporchuk.network.interfaces;
 
 import com.ukma.nechyporchuk.core.entities.Message;
 import com.ukma.nechyporchuk.core.entities.Packet;
-import com.ukma.nechyporchuk.utils.Constants;
+import com.ukma.nechyporchuk.core.utils.Constants;
 
 import java.util.Random;
 

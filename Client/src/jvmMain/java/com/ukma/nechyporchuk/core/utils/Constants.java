@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.utils;
+package com.ukma.nechyporchuk.core.utils;
 
 public class Constants {
     public static final int PACKET_LENGTH_WITHOUT_MESSAGE = 18;

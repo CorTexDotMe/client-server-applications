@@ -3,9 +3,9 @@ package com.ukma.nechyporchuk.network.implementation.http;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.*;
+import com.ukma.nechyporchuk.core.entities.Item;
+import com.ukma.nechyporchuk.core.security.JWT;
 import com.ukma.nechyporchuk.database.Database;
-import com.ukma.nechyporchuk.database.Item;
-import com.ukma.nechyporchuk.security.JWT;
 
 import java.io.IOException;
 import java.io.InputStream;

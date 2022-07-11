@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.security;
+package com.ukma.nechyporchuk.core.security;
 
 public class Decryptor {
     private static final PacketCipher cipher = PacketCipher.getInstance();

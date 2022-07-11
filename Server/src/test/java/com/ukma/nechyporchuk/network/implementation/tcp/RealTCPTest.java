@@ -1,11 +1,11 @@
 package com.ukma.nechyporchuk.network.implementation.tcp;
 
-import com.ukma.nechyporchuk.utils.CommandAnalyser;
+import com.ukma.nechyporchuk.core.entities.Group;
+import com.ukma.nechyporchuk.core.entities.Item;
 import com.ukma.nechyporchuk.core.entities.Message;
 import com.ukma.nechyporchuk.core.entities.Packet;
-import com.ukma.nechyporchuk.database.Group;
-import com.ukma.nechyporchuk.database.Item;
-import com.ukma.nechyporchuk.utils.Constants;
+import com.ukma.nechyporchuk.core.utils.CommandAnalyser;
+import com.ukma.nechyporchuk.core.utils.Constants;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
