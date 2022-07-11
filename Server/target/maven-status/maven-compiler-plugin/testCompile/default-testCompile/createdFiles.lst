@@ -1,0 +1,8 @@
+com\ukma\nechyporchuk\processor\ControllerTest.class
+com\ukma\nechyporchuk\processor\PacketTest.class
+com\ukma\nechyporchuk\database\DatabaseTest.class
+com\ukma\nechyporchuk\utils\PacketCipherTest.class
+com\ukma\nechyporchuk\network\implementation\tcp\RealTCPTest.class
+com\ukma\nechyporchuk\utils\CRC16Test.class
+com\ukma\nechyporchuk\network\implementation\tcp\TCPTest.class
+com\ukma\nechyporchuk\network\implementation\udp\UDPTest.class

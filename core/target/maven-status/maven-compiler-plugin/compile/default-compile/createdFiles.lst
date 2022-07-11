@@ -1,0 +1,11 @@
+com\ukma\nechyporchuk\entities\User.class
+com\ukma\nechyporchuk\utils\CRC16.class
+com\ukma\nechyporchuk\entities\Message.class
+com\ukma\nechyporchuk\entities\Packet.class
+com\ukma\nechyporchuk\security\PacketCipher.class
+com\ukma\nechyporchuk\entities\Item.class
+com\ukma\nechyporchuk\entities\Group.class
+com\ukma\nechyporchuk\utils\Constants.class
+com\ukma\nechyporchuk\security\Encryptor.class
+com\ukma\nechyporchuk\utils\CommandAnalyser.class
+com\ukma\nechyporchuk\security\Decryptor.class

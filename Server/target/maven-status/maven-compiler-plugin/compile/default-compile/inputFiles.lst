@@ -1,0 +1,15 @@
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\interfaces\Sender.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\processor\Controller.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\security\JWT.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\implementation\tcp\StoreServerTCP.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\implementation\udp\StoreServerUDP.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\database\Database.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\processor\Processor.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\implementation\http\ShopHttpServer.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\implementation\udp\UDPSender.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\implementation\udp\UDPReceiver.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\implementation\tcp\TCPSender.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\implementation\tcp\TCPReceiver.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\implementation\udp\StoreClientUDP.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\interfaces\Receiver.java
+C:\Workspace\.Projects\Client_Server_Project\Server\src\main\java\com\ukma\nechyporchuk\network\implementation\tcp\StoreClientTCP.java
