@@ -562,18 +562,19 @@ public class Database {
     }
 
     public static void main(String[] args) {
-        Database sqlTest = new Database("ShopDB");
-//        Database sqlTest = new Database("Shop database");
+//        Database sqlTest = new Database("ShopDB");
+        Database sqlTest = new Database("Shop database");
 //        sqlTest.insertTestData("SuperMAKAKA");
 //        sqlTest.insertTestData("NewMAKAKA");
 //        sqlTest.createGroup("Крупи");
 
-//        sqlTest.createGroup("AAA", "You can eat it! I guess");
+//        sqlTest.createGroup("Not food", "You cannnot eat it!");
+//        sqlTest.createGroup("Food", "You can eat it!");
 //        sqlTest.createItem("Grechkaa", "healthy i guess", 0, 40.0, "Kyiv-something", sqlTest.readGroup("Food").getId());
 
 //        sqlTest.createUser("1WtpmDDne6U4VWecsdJS2g==", "X03MO1qnZdYdgyfeuILPmQ==");
 
-//        sqlTest.createItem("Cookie", "obviously tasty", 10, 30.0, "Kyiv-something", sqlTest.readGroup("Food").getId());
+//        sqlTest.createItem("Ice cream", "obviously tasty", 100, 2.25, "Morzho", sqlTest.readGroup("Food").getId());
 
 
         for (Group group : sqlTest.readAllGroups())
