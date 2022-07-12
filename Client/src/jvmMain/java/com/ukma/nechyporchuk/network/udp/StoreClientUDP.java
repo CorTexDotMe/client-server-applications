@@ -75,6 +75,14 @@ public class StoreClientUDP implements Client {
      * @return byte array
      */
     public byte[] sendAndReceiveMessage(byte[] msg) {
+        return sendAndReceive(msg, true);
+    }
+
+    public byte[] sendAndReceiveMessageWithoutReconnect(byte[] msg) {
+        return sendAndReceive(msg, false);
+    }
+
+    private byte[] sendAndReceive(byte[] msg, boolean reconnect) {
         try {
             sendMessage(msg, port);
 
@@ -87,9 +95,11 @@ public class StoreClientUDP implements Client {
             return packet.getData();
         } catch (SocketTimeoutException e) {
             System.out.println("Sending packet again"); // for testing
-            return sendAndReceiveMessage(msg);
-        } catch (TimeoutCancellationException e) {
-            return null;
+
+            if (reconnect)
+                return sendAndReceiveMessage(msg);
+            else
+                return null;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -97,7 +107,7 @@ public class StoreClientUDP implements Client {
     }
 
     @Override
-    public void startConnection(String ip, int port) {
+    public void startConnection(String ip, int port, boolean reconnect) {
         this.port = port;
     }
 

@@ -1,11 +1,8 @@
 import com.ukma.nechyporchuk.core.entities.Group
 import com.ukma.nechyporchuk.core.entities.Item
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assumptions.assumeTrue
 
 internal class FacadeTest {
 
@@ -22,8 +19,8 @@ internal class FacadeTest {
         @BeforeAll
         @JvmStatic
         internal fun beforeClass() {
-            facade = Facade()
-//            Assumptions.assumeTrue(facade.connected)
+            facade = Facade(useTCP = true, reconnectInfinitely = false)
+            assumeTrue(facade.connected, "Cannot connect to server")
         }
     }
 
@@ -141,5 +138,12 @@ internal class FacadeTest {
         facade.updateGroupId(initItem1.id, newGroupId)
 
         assertEquals(newGroupId, facade.getItem(initItem1.id)!!.groupId)
+    }
+
+    @Test
+    fun testDeleteItem() {
+        facade.deleteItem(initItem1.id)
+        assertNull(facade.getItem(initItem1.id))
+
     }
 }

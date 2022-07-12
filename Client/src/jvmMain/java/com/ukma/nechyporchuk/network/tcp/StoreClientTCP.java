@@ -20,7 +20,7 @@ public class StoreClientTCP implements Client {
     private DataOutputStream out;
     private DataInputStream in;
 
-    public void startConnection(String ip, int port) {
+    public void startConnection(String ip, int port, boolean reconnect) {
         try {
             this.ip = ip;
             this.port = port;
@@ -29,13 +29,14 @@ public class StoreClientTCP implements Client {
             out = new DataOutputStream(clientSocket.getOutputStream());
             in = new DataInputStream(clientSocket.getInputStream());
         } catch (ConnectException e) {
-            try {
+            if (reconnect)
+                try {
 //              Client is trying to reconnect
-                Thread.sleep(Constants.WAITING_TIME_MILLISECONDS);
-                startConnection(ip, port);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+                    Thread.sleep(Constants.WAITING_TIME_MILLISECONDS);
+                    startConnection(ip, port, true);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -106,8 +107,25 @@ public class StoreClientTCP implements Client {
             try {
 //              Client is trying to reconnect
                 Thread.sleep(Constants.WAITING_TIME_MILLISECONDS);
-                startConnection(ip, port);
+                startConnection(ip, port, true);
                 return sendAndReceiveMessage(msg);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    public byte[] sendAndReceiveMessageWithoutReconnect(byte[] msg) {
+        try {
+            out.write(msg);
+
+            return readPacket();
+        } catch (IOException | NullPointerException e) {
+            try {
+//              Client is trying to reconnect
+                Thread.sleep(Constants.WAITING_TIME_MILLISECONDS);
+                startConnection(ip, port, false);
+                return null;
             } catch (InterruptedException ex) {
                 throw new RuntimeException(ex);
             }

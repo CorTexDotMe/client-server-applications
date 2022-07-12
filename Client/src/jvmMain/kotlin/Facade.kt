@@ -9,10 +9,7 @@ import com.ukma.nechyporchuk.core.utils.Constants
 import com.ukma.nechyporchuk.network.Client
 import com.ukma.nechyporchuk.network.tcp.StoreClientTCP
 import com.ukma.nechyporchuk.network.udp.StoreClientUDP
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.*
 import java.util.concurrent.CompletableFuture
 
 fun ByteArray.toPacket(): Packet {
@@ -20,7 +17,7 @@ fun ByteArray.toPacket(): Packet {
 }
 
 //TODO посередник. Як використовується мапер
-class Facade(useTCP: Boolean = false) {
+class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
     var connected: Boolean = false
     private val ip = "127.0.0.1"
     private val objectMapper = ObjectMapper()
@@ -30,14 +27,26 @@ class Facade(useTCP: Boolean = false) {
     private val bSrc: Byte
     private val bUserId: Int
 
-    private suspend fun temp(): Packet {
-        return client.sendAndReceiveMessage(
-            Packet(
-                0b1,
-                0,
+    private suspend fun receivePacket(): Packet? {
+        return withContext(Dispatchers.IO) {
+
+            val packet = Packet(
+                0b1, 0,
                 Message(CommandAnalyser.INITIAL_PACKET, 0, emptyJsonAsBytes())
             ).bytes
-        ).toPacket()
+
+            if (reconnectInfinitely)
+                return@withContext client.sendAndReceiveMessage(packet).toPacket()
+            else {
+                while (isActive) {
+                    val result = client.sendAndReceiveMessageWithoutReconnect(packet)
+                    if (result != null) return@withContext result.toPacket()
+                }
+
+                return@withContext null
+            }
+        }
+
     }
 
     init {
@@ -46,27 +55,11 @@ class Facade(useTCP: Boolean = false) {
             else StoreClientUDP()
         startConnection()
 
-        val future = CompletableFuture<Packet?>()
 
         val response = runBlocking {
-//            try {
-
-            withTimeoutOrNull(Constants.WAITING_TIME_MILLISECONDS.toLong() / 2) {
-                withContext(Dispatchers.IO) {
-                    client.sendAndReceiveMessage(
-                        Packet(
-                            0b1,
-                            0,
-                            Message(CommandAnalyser.INITIAL_PACKET, 0, emptyJsonAsBytes())
-                        ).bytes
-                    ).toPacket()
-                }
+            withTimeoutOrNull(Constants.WAITING_TIME_MILLISECONDS.toLong() * 2) {
+                receivePacket()
             }
-
-//            } catch (e: TimeoutCancellationException) {
-//                null
-//            }
-
         }
 
         if (response != null) {
@@ -79,11 +72,12 @@ class Facade(useTCP: Boolean = false) {
 
             bSrc = (map["bSrc"] as Int).toByte()
             bUserId = map["bUserId"] as Int
+
+            endConnection()
         } else {
             bSrc = 0
             bUserId = 0
         }
-        endConnection()
     }
 
     fun getGroup(id: Int): Group? {
@@ -277,7 +271,7 @@ class Facade(useTCP: Boolean = false) {
     }
 
     private fun startConnection(port: Int = client.port) {
-        client.startConnection(ip, port)
+        client.startConnection(ip, port, reconnectInfinitely)
     }
 
     private fun endConnection() {
