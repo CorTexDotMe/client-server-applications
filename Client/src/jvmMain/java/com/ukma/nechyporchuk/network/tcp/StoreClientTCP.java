@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 public class StoreClientTCP implements Client {
     private Socket clientSocket;
     private String ip;
-    private int port;
+    private int port = Constants.TCP_PORT;
 
     private DataOutputStream out;
     private DataInputStream in;
@@ -125,7 +125,13 @@ public class StoreClientTCP implements Client {
         return responsePacket.getBPktId() + " (bPktId). " +
                new String(responsePacket.getBMsg().getMessage(), StandardCharsets.UTF_8);
     }
-/*
+
+    @Override
+    public int getPort() {
+        return port;
+    }
+
+    /*
     public static void main(String[] args) throws IOException {
         StoreClientTCP client = new StoreClientTCP();
         client.startConnection("127.0.0.1", Constants.TCP_PORT);

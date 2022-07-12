@@ -1,18 +1,13 @@
 package com.ukma.nechyporchuk.processor;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ukma.nechyporchuk.core.entities.Group;
 import com.ukma.nechyporchuk.core.entities.Item;
 import com.ukma.nechyporchuk.core.entities.Message;
 import com.ukma.nechyporchuk.core.utils.CommandAnalyser;
 import com.ukma.nechyporchuk.database.Database;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +49,12 @@ public class Processor {
                     response = OBJECT_MAPPER.writeValueAsBytes(database.readAllItems());
                     break;
 
+                case CommandAnalyser.GROUP_GET:
+                    Group group = database.readGroup((int) map.get("id"));
+
+                    response = OBJECT_MAPPER.writeValueAsBytes(group);
+                    break;
+
                 case CommandAnalyser.GROUP_GET_ALL:
                     response = OBJECT_MAPPER.writeValueAsBytes(database.readAllGroups());
                     break;
@@ -75,7 +76,7 @@ public class Processor {
                             (int) map.get("amount"),
                             (double) map.get("cost"),
                             (String) map.get("producer"),
-                            (int) map.get("group")
+                            (int) map.get("groupId")
                     );
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "OK_CREATE_ITEM"));
                     break;
@@ -119,7 +120,7 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.ITEM_SET_GROUP:
-                    database.updateItemGroup((int) map.get("id"), (String) map.get("group"));
+                    database.updateItemGroup((int) map.get("id"), (int) map.get("groupId"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_SET_GROUP"));
                     break;
@@ -131,7 +132,7 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.GROUP_SET_DESCRIPTION:
-                    database.updateGroupName((int) map.get("id"), (String) map.get("description"));
+                    database.updateGroupDescription((int) map.get("id"), (String) map.get("description"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "GROUP_SET_DESCRIPTION"));
                     break;

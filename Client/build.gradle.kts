@@ -33,6 +33,10 @@ kotlin {
     }
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 compose.desktop {
     application {
         mainClass = "MainKt"
@@ -50,11 +54,19 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5") // or 'io.jsonwebtoken:jjwt-gson:0.11.5' for gson
 
-// https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+    // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     implementation("org.xerial:sqlite-jdbc:3.36.0.3")
-// https://mvnrepository.com/artifact/org.json/json
+    // https://mvnrepository.com/artifact/org.json/json
     implementation("org.json:json:20220320")
-// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0-RC1")
+    // https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher
+    testImplementation("org.junit.platform:junit-platform-launcher:1.9.0-RC1")
+    // https://mvnrepository.com/artifact/org.junit.platform/junit-platform-runner
+    testImplementation("org.junit.platform:junit-platform-runner:1.9.0-RC1")
+
 
 }

@@ -54,8 +54,8 @@ public class UDPReceiver implements com.ukma.nechyporchuk.network.interfaces.Rec
             }
         } catch (BufferUnderflowException ignored) {
 
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

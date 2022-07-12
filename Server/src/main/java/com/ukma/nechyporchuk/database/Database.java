@@ -344,13 +344,9 @@ public class Database {
         );
     }
 
-    public void updateItemGroup(int id, String group) {
+    public void updateItemGroup(int id, int groupId) {
         try {
             PreparedStatement statement = con.prepareStatement("update items set groupId=(?) where id=(?)");
-
-            int groupId = readGroupId(group);
-            if (groupId == -1)
-                throw new IllegalArgumentException("No such group with name: " + group);
 
             statement.setInt(1, groupId);
             statement.setInt(2, id);
@@ -362,6 +358,14 @@ public class Database {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
         }
+    }
+
+    public void updateItemGroup(int id, String group) {
+        int groupId = readGroupId(group);
+        if (groupId == -1)
+            throw new IllegalArgumentException("No such group with name: " + group);
+
+        updateItemGroup(id, groupId);
     }
 
     public void deleteGroup(int id) {

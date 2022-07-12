@@ -19,7 +19,6 @@ public class CommandAnalyser {
     public static final int
             GET = 4,
             GET_ALL = 6,
-            GET_BY_GROUP = 7,
             REMOVE = 8,
             CREATE = 32,
             SET_NAME = 40,
@@ -28,7 +27,8 @@ public class CommandAnalyser {
             SET_COST = 64,
             SET_PRODUCER = 72,
             SET_GROUP = 80,
-            INITIAL_PACKET = 88;
+            INITIAL_PACKET = 88,
+            GET_BY_GROUP = 96;
 
     public static final int
             ITEM_GET = ITEM ^ GET,
@@ -44,6 +44,7 @@ public class CommandAnalyser {
             ITEM_SET_GROUP = ITEM ^ SET_GROUP;
 
     public static final int
+            GROUP_GET = GROUP ^ GET,
             GROUP_CREATE = GROUP ^ CREATE,
             GROUP_GET_ALL = GROUP ^ GET_ALL,
             GROUP_REMOVE = GROUP ^ REMOVE,

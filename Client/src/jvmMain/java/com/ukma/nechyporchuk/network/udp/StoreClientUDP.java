@@ -3,6 +3,7 @@ package com.ukma.nechyporchuk.network.udp;
 import com.ukma.nechyporchuk.core.entities.Packet;
 import com.ukma.nechyporchuk.core.utils.Constants;
 import com.ukma.nechyporchuk.network.Client;
+import kotlinx.coroutines.TimeoutCancellationException;
 
 import java.io.IOException;
 import java.net.*;
@@ -48,13 +49,17 @@ public class StoreClientUDP implements Client {
      * @param port - integer as port for datagram packet
      * @return message: packetId. CType
      */
-    public String receiveMessage(int port) {
+    public byte[] receiveMessage(int port) {
         try {
             buf = new byte[Constants.MAX_PACKET_LENGTH];
             DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
+            socket.setSoTimeout(Constants.WAITING_TIME_MILLISECONDS);
             socket.receive(packet);
 
-            return decryptPacket(packet.getData());
+            return packet.getData();
+        } catch (SocketTimeoutException e) {
+            System.out.println("Sending packet again"); // for testing
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -83,6 +88,8 @@ public class StoreClientUDP implements Client {
         } catch (SocketTimeoutException e) {
             System.out.println("Sending packet again"); // for testing
             return sendAndReceiveMessage(msg);
+        } catch (TimeoutCancellationException e) {
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -107,6 +114,10 @@ public class StoreClientUDP implements Client {
 
     public void close() {
         socket.close();
+    }
+
+    public int getPort() {
+        return port;
     }
 
     /*
