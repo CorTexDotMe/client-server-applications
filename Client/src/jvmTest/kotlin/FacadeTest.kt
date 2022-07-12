@@ -19,7 +19,8 @@ internal class FacadeTest {
         @BeforeAll
         @JvmStatic
         internal fun beforeClass() {
-            facade = Facade(useTCP = true, reconnectInfinitely = false)
+            facade = Facade(useTCP = false, reconnectInfinitely = true)
+//            facade = Facade.getInstance()
             assumeTrue(facade.connected, "Cannot connect to server")
         }
     }

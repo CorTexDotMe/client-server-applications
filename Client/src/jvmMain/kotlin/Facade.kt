@@ -27,6 +27,22 @@ class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
     private val bSrc: Byte
     private val bUserId: Int
 
+    companion object {
+        @Volatile
+        private var instance: Facade? = null
+
+        fun getInstance(useTCP: Boolean = false, reconnectInfinitely: Boolean = true): Facade {
+            synchronized(this) {
+                var localInstance = instance
+                if (localInstance == null) {
+                    localInstance = Facade(useTCP, reconnectInfinitely)
+                    instance = localInstance
+                }
+                return localInstance
+            }
+        }
+    }
+
     private suspend fun receivePacket(): Packet? {
         return withContext(Dispatchers.IO) {
 
