@@ -1,8 +1,10 @@
 package com.ukma.nechyporchuk.core.entities;
 
+import com.arkivanov.essenty.parcelable.Parcelable;
+
 import java.util.Objects;
 
-public class Item {
+public class Item implements Parcelable {
     private int id;
     private String name;
     private String description;
@@ -90,11 +92,20 @@ public class Item {
     @Override
     public String toString() {
         return id + ". " + name + '\n' +
-               "\tDescription: " + description + '\n' +
-               "\tAmount: " + amount + '\n' +
-               "\tCost: " + cost + '\n' +
-               "\tProducer: " + producer + '\n' +
-               "\tGroupID: " + groupId;
+               "    Description: " + description + '\n' +
+               "    Amount: " + amount + '\n' +
+               "    Cost: " + cost + '\n' +
+               "    Producer: " + producer + '\n' +
+               "    GroupID: " + groupId;
+    }
+
+    public String additionalInfo() {
+        return "Description: " + description + '\n' +
+               "Amount: " + amount + '\n' +
+               "Cost: " + cost + '\n' +
+               "Total cost: " + amount * cost + '\n' +
+               "Producer: " + producer;
+
     }
 
     @Override

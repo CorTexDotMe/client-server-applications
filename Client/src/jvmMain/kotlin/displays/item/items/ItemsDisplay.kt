@@ -1,8 +1,7 @@
 package displays.item.items
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -12,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.adeo.kviewmodel.compose.observeAsState
 import com.ukma.nechyporchuk.core.entities.Group
 import com.ukma.nechyporchuk.core.entities.Item
@@ -47,12 +47,13 @@ fun ItemsDisplay(
             modifier = Modifier.padding(padding),
             group = state.value.group.value,
             items = state.value.items.value,
+            itemsTotalCost = viewModel.itemsTotalCost,
             onItemClicked = onItemClicked
         )
     }
 
     LaunchedEffect(key1 = true) {
-            viewModel.obtainEvent(ItemsEvent.ItemsDisplay)
+        viewModel.obtainEvent(ItemsEvent.ItemsDisplay)
     }
 }
 
@@ -62,9 +63,18 @@ fun Items(
     modifier: Modifier = Modifier,
     group: Group,
     items: List<Item>,
+    itemsTotalCost: Double,
     onItemClicked: (item: Item) -> Unit
 ) {
-    LazyColumn(modifier) {
+//    TODO ScrollBar
+    LazyColumn(
+        modifier,
+        contentPadding = PaddingValues(
+            horizontal = 18.dp,
+            vertical = 6.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         item {
             Text(
                 text = group.name,
@@ -72,16 +82,35 @@ fun Items(
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.h4
             )
+            if (itemsTotalCost != 0.0)
+                Text(
+                    text = "Total cost: $itemsTotalCost",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.subtitle1
+                )
         }
         items(items) { item ->
             Button(
                 onClick = { onItemClicked(item) },
                 modifier = Modifier
             ) {
-                Text(
-                    text = item.toString(),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Column {
+                    Text(
+                        text = item.name,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.h6
+                    )
+                    Divider(
+                        color = MaterialTheme.colors.onSecondary, thickness = 3.dp,
+                        modifier = Modifier.padding(bottom = 20.dp)
+                    )
+                    Text(
+                        text = item.additionalInfo(),
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.body2
+                    )
+                }
             }
         }
     }

@@ -50,6 +50,12 @@ compose.desktop {
     }
 }
 
+tasks.register("clean run") {
+    dependsOn("clean")
+    dependsOn("build")
+    dependsOn("run")
+}
+
 dependencies {
     api("io.jsonwebtoken:jjwt-api:0.11.5")
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt

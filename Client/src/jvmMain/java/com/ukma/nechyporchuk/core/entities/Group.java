@@ -5,7 +5,7 @@ import com.arkivanov.essenty.parcelable.Parcelable;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Group implements Serializable, Parcelable {
+public class Group implements Parcelable {
     private int id;
     private String name;
     private String description;
@@ -49,7 +49,11 @@ public class Group implements Serializable, Parcelable {
     @Override
     public String toString() {
         return id + ". " + name + '\n' +
-               "\tDescription: " + description;
+               "    Description: " + description;
+    }
+
+    public String additionalInfo() {
+        return "Description: " + description;
     }
 
     @Override

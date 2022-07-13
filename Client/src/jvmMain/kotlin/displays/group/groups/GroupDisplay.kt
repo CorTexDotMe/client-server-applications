@@ -1,12 +1,17 @@
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.adeo.kviewmodel.compose.observeAsState
 import com.ukma.nechyporchuk.core.entities.Group
 import displays.group.groups.GroupDisplayViewModel
@@ -36,7 +41,14 @@ fun Groups(
     groups: List<Group>,
     onGroupClicked: (group: Group) -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier,
+        contentPadding = PaddingValues(
+            horizontal = 18.dp,
+            vertical = 6.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         item {
             Text(
                 text = "Storage",
@@ -50,10 +62,19 @@ fun Groups(
                 onClick = { onGroupClicked(group) },
                 modifier = Modifier
             ) {
-                Text(
-                    text = group.toString(),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Column {
+                    Text(
+                        text = group.name,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.h5
+                    )
+
+                    Text(
+                        text = group.description,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.body2
+                    )
+                }
             }
         }
     }

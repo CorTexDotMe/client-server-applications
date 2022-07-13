@@ -32,22 +32,6 @@ fun main() {
         }
     }
 }
-
-@Composable
-fun <T> rememberRootComponent(
-    lifecycle: Lifecycle,
-    factory: (ComponentContext) -> T
-): T {
-    return remember {
-        val componentContext =
-            DefaultComponentContext(
-                lifecycle = lifecycle,
-            )
-
-        factory(componentContext)
-    }
-}
-
 //private fun createStoreRoot(componentContext: ComponentContext): StoreRoot{
 //
 //}

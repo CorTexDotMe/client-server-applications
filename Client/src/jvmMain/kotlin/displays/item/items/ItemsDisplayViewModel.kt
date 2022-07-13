@@ -13,6 +13,8 @@ import utils.Facade
 class ItemsDisplayViewModel(group: Group) :
     BaseSharedViewModel<ItemsState, ItemsAction, ItemsEvent>(initialState = ItemsState(mutableStateOf(group))) {
 
+    var itemsTotalCost = 0.0;
+
 //    init {
 //        loadItems()
 //    }
@@ -25,6 +27,8 @@ class ItemsDisplayViewModel(group: Group) :
         viewModelScope.launch(Dispatchers.IO) {
             val group = viewState.group.value
             viewState.items.value = Facade.getInstance().getAllItemsByGroup(group.id)
+
+            itemsTotalCost = viewState.items.value.sumOf { it.cost * it.amount }
         }
     }
 }
