@@ -1,9 +1,14 @@
 package com.ukma.nechyporchuk.network.interfaces;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ukma.nechyporchuk.core.entities.Message;
 import com.ukma.nechyporchuk.core.entities.Packet;
 import com.ukma.nechyporchuk.core.utils.Constants;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public interface Receiver {
@@ -12,13 +17,14 @@ public interface Receiver {
     byte[] poll();
 
     static byte[] getRandomPacket() {
-        Random random = new Random();
+        try {
+            Random random = new Random();
 
-        byte bSrc = (byte) random.nextInt(256);
-        long bPktId = Constants.bPktIdForTesting;
-        Constants.bPktIdForTesting += 2;
+            byte bSrc = (byte) random.nextInt(256);
+            long bPktId = Constants.bPktIdForTesting;
+            Constants.bPktIdForTesting += 2;
 
-        int cType = Integer.MAX_VALUE;
+            int cType = Integer.MAX_VALUE;
         /*
         switch (random.nextInt(6)) {
             case 0 -> cType = CommandAnalyser.ITEM_GET;
@@ -30,10 +36,15 @@ public interface Receiver {
         }
          */
 
-        int bUserId = random.nextInt();
-        byte[] messageBytes = new byte[0];
-        Message bMsg = new Message(cType, bUserId, messageBytes);
-        Packet message = new Packet(bSrc, bPktId, bMsg);
-        return message.getBytes();
+            int bUserId = random.nextInt();
+
+            ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+            Message bMsg = new Message(cType, bUserId, OBJECT_MAPPER.writeValueAsBytes(new HashMap<String, String>()));
+
+            Packet message = new Packet(bSrc, bPktId, bMsg);
+            return message.getBytes();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

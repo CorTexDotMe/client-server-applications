@@ -1,5 +1,7 @@
 package com.ukma.nechyporchuk.network.implementation.udp;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ukma.nechyporchuk.core.entities.Packet;
 import com.ukma.nechyporchuk.core.utils.Constants;
 import com.ukma.nechyporchuk.network.interfaces.Receiver;
@@ -7,6 +9,7 @@ import com.ukma.nechyporchuk.network.interfaces.Receiver;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class StoreClientUDP {
     private DatagramSocket socket;
@@ -89,10 +92,14 @@ public class StoreClientUDP {
         }
     }
 
-    private String decryptPacket(byte[] packet) {
+    private String decryptPacket(byte[] packet) throws IOException {
         Packet responsePacket = new Packet(packet);
+        ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+        Map<String, Object> map = OBJECT_MAPPER.readValue(responsePacket.getBMsg().getMessage(), new TypeReference<>() {
+        });
+
         return responsePacket.getBPktId() + " (bPktId). " +
-               new String(responsePacket.getBMsg().getMessage(), StandardCharsets.UTF_8);
+               map.get("response");
     }
 
     public void close() {

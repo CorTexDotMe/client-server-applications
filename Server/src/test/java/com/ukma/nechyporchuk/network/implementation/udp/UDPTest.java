@@ -35,7 +35,7 @@ class UDPTest {
 
         System.out.println(response1);
         System.out.println(response2);
-        assertTrue(response1.contains("OK") || response2.contains("OK"));
+        assertTrue(response1.contains("Wrong command") && response2.contains("Wrong command"));
     }
 
     @Test
@@ -51,7 +51,7 @@ class UDPTest {
         String response2 = client2.receiveMessage(Constants.UDP_PORT);
         System.out.println(response1);
         System.out.println(response2);
-        assertTrue(response1.contains("OK") || response2.contains("OK"));
+        assertTrue(response1.contains("Wrong command") && response2.contains("Wrong command"));
     }
 
     @Test
