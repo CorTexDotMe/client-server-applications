@@ -3,6 +3,7 @@ import com.ukma.nechyporchuk.core.entities.Item
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import utils.Facade
 
 internal class FacadeTest {
 
@@ -19,7 +20,7 @@ internal class FacadeTest {
         @BeforeAll
         @JvmStatic
         internal fun beforeClass() {
-            facade = Facade(useTCP = false, reconnectInfinitely = true)
+            facade = Facade(useTCP = false, reconnectInfinitely = false)
 //            facade = Facade.getInstance()
             assumeTrue(facade.connected, "Cannot connect to server")
         }

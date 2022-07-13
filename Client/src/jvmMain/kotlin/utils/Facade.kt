@@ -1,3 +1,5 @@
+package utils
+
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ukma.nechyporchuk.core.entities.Group
@@ -10,7 +12,6 @@ import com.ukma.nechyporchuk.network.Client
 import com.ukma.nechyporchuk.network.tcp.StoreClientTCP
 import com.ukma.nechyporchuk.network.udp.StoreClientUDP
 import kotlinx.coroutines.*
-import java.util.concurrent.CompletableFuture
 
 fun ByteArray.toPacket(): Packet {
     return Packet(this)

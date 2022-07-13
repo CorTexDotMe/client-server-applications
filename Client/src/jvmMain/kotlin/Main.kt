@@ -1,28 +1,84 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
+import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.DefaultComponentContext
+import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import navigation.NavHostComponent
 
-@Composable
-@Preview
-fun App() {
-    var text by remember { mutableStateOf("Hello, World!") }
+fun main() {
+    val lifecycle = LifecycleRegistry()
+//    val root = createStoreRoot(DefaultComponentContext(lifecycle = lifecycle))
 
-    MaterialTheme {
-        Button(onClick = {
-            text = "Hello, Desktop!"
-        }) {
-            Text(text)
+    application {
+        val windowState = rememberWindowState()
+
+        Window(
+            onCloseRequest = ::exitApplication,
+            state = windowState,
+            title = "Decompose Sample"
+        ) {
+//            Surface(modifier = Modifier.fillMaxSize()) {
+                MaterialTheme {
+                    rememberRootComponent(lifecycle = lifecycle, factory = ::NavHostComponent)
+                        .render()
+                }
+//            }
         }
     }
 }
 
-fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
-        App()
+@Composable
+fun <T> rememberRootComponent(
+    lifecycle: Lifecycle,
+    factory: (ComponentContext) -> T
+): T {
+    return remember {
+        val componentContext =
+            DefaultComponentContext(
+                lifecycle = lifecycle,
+            )
+
+        factory(componentContext)
     }
 }
+
+//private fun createStoreRoot(componentContext: ComponentContext): StoreRoot{
+//
+//}
+//
+//@Composable
+//fun RootContent() {
+//    val router = rememberRouter<Screen>(
+//        initialConfiguration = { NavHostComponent.ScreenConfig.GroupDisplay }
+//    )
+//
+//    Children(
+//        routerState = router.state
+//    ) { screen ->
+//        when (screenConfig) {
+//            is NavHostComponent.ScreenConfig.GroupDisplay -> GroupDisplayComponent(
+//                componentContext = componentContext,
+//                onGroupClicked = { group ->
+//                    router.push(NavHostComponent.ScreenConfig.ItemsDisplay(group))
+//                }
+//            )
+//
+//            is NavHostComponent.ScreenConfig.ItemsDisplay -> ItemsDisplayComponent(
+//                componentContext = componentContext,
+//                onItemClicked = { item ->
+//
+//                }
+//            )
+//            when (val configuration = screen.configuration) {
+//                is Screen.List -> List(onItemClick = { router.push(Screen.Details(text = it)) })
+//                is Screen.Details -> Details(text = configuration.text, onBack = router::pop)
+//            }
+//        }
+//    }
