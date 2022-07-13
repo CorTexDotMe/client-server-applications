@@ -1,4 +1,4 @@
-package com.ukma.nechyporchuk.ui
+package ui
 
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme

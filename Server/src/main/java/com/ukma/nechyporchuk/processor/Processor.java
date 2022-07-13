@@ -70,7 +70,7 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.ITEM_CREATE:
-                    database.createItem(
+                    boolean itemCreated = database.createItem(
                             (String) map.get("name"),
                             (String) map.get("description"),
                             (int) map.get("amount"),
@@ -78,21 +78,21 @@ public class Processor {
                             (String) map.get("producer"),
                             (int) map.get("groupId")
                     );
-                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "OK_CREATE_ITEM"));
+                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", itemCreated));
                     break;
 
                 case CommandAnalyser.GROUP_CREATE:
-                    database.createGroup(
+                    boolean groupCreated = database.createGroup(
                             (String) map.get("name"),
                             (String) map.get("description")
                     );
-                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "OK_CREATE_GROUP"));
+                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", groupCreated));
                     break;
 
                 case CommandAnalyser.ITEM_SET_NAME:
-                    database.updateItemName((int) map.get("id"), (String) map.get("name"));
+                    boolean itemNameChanged = database.updateItemName((int) map.get("id"), (String) map.get("name"));
 
-                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_SET_NAME"));
+                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", itemNameChanged));
                     break;
 
                 case CommandAnalyser.ITEM_SET_DESCRIPTION:
@@ -126,9 +126,9 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.GROUP_SET_NAME:
-                    database.updateGroupName((int) map.get("id"), (String) map.get("name"));
+                    boolean groupNameChanged = database.updateGroupName((int) map.get("id"), (String) map.get("name"));
 
-                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "GROUP_SET_NAME"));
+                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", groupNameChanged));
                     break;
 
                 case CommandAnalyser.GROUP_SET_DESCRIPTION:

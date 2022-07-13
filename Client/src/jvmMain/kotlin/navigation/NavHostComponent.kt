@@ -11,6 +11,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.ukma.nechyporchuk.core.entities.Group
 import com.ukma.nechyporchuk.core.entities.Item
 import displays.group.groups.GroupDisplayComponent
+import displays.group.edit.GroupEditDisplayComponent
 import displays.item.edit.ItemEditDisplayComponent
 import displays.item.items.ItemsDisplayComponent
 
@@ -42,12 +43,21 @@ class NavHostComponent(
                 onItemClicked = { item ->
                     router.push(ScreenConfig.ItemEdit(item))
                 },
+                onChangeGroup = {
+                    router.push(ScreenConfig.GroupEdit(screenConfig.group))
+                },
                 onBackClicked = router::pop
             )
 
             is ScreenConfig.ItemEdit -> ItemEditDisplayComponent(
                 componentContext = componentContext,
                 item = screenConfig.item,
+                onBackClicked = router::pop
+            )
+
+            is ScreenConfig.GroupEdit -> GroupEditDisplayComponent(
+                componentContext = componentContext,
+                group = screenConfig.group,
                 onBackClicked = router::pop
             )
         }
@@ -63,6 +73,7 @@ class NavHostComponent(
 
     private sealed class ScreenConfig : Parcelable {
         object GroupDisplay : ScreenConfig()
+        data class GroupEdit(val group: Group) : ScreenConfig()
         data class ItemsDisplay(val group: Group) : ScreenConfig()
         data class ItemEdit(val item: Item) : ScreenConfig()
     }

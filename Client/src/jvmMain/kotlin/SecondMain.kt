@@ -10,7 +10,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.ukma.nechyporchuk.ui.WroteTheme
+import ui.WroteTheme
 import navigation.NavHostComponent
 
 fun main() {

@@ -32,7 +32,7 @@ class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
         @Volatile
         private var instance: Facade? = null
 
-        fun getInstance(useTCP: Boolean = false, reconnectInfinitely: Boolean = true): Facade {
+        fun getInstance(useTCP: Boolean = true, reconnectInfinitely: Boolean = true): Facade {
             synchronized(this) {
                 var localInstance = instance
                 if (localInstance == null) {
@@ -178,7 +178,7 @@ class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
     fun createGroup(
         name: String,
         description: String,
-    ) {
+    ): Boolean {
         startConnection()
 
         val message = Message(
@@ -194,6 +194,9 @@ class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
 
         val response = client.sendAndReceiveMessage(packet.bytes).toPacket()
         endConnection()
+
+        return objectMapper.readValue(response.bMsg.message, object : TypeReference<Map<String, Any>>() {})
+            .get("response") as Boolean
     }
 
     fun createItem(
@@ -203,7 +206,7 @@ class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
         cost: Double,
         producer: String,
         groupId: Int
-    ) {
+    ): Boolean {
         startConnection()
 
         val message = Message(
@@ -223,18 +226,23 @@ class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
 
         val response = client.sendAndReceiveMessage(packet.bytes).toPacket()
         endConnection()
+
+        return objectMapper.readValue(response.bMsg.message, object : TypeReference<Map<String, Any>>() {})
+            .get("response") as Boolean
     }
 
-    fun updateGroupName(id: Int, name: String) {
-        updateField(id, CommandAnalyser.GROUP_SET_NAME, "name" to name)
+    fun updateGroupName(id: Int, name: String): Boolean {
+        val responseMap = updateField(id, CommandAnalyser.GROUP_SET_NAME, "name" to name)
+        return responseMap["response"] as Boolean
     }
 
     fun updateGroupDescription(id: Int, description: String) {
         updateField(id, CommandAnalyser.GROUP_SET_DESCRIPTION, "description" to description)
     }
 
-    fun updateItemName(id: Int, name: String) {
-        updateField(id, CommandAnalyser.ITEM_SET_NAME, "name" to name)
+    fun updateItemName(id: Int, name: String): Boolean {
+        val responseMap = updateField(id, CommandAnalyser.ITEM_SET_NAME, "name" to name)
+        return responseMap["response"] as Boolean
     }
 
     fun updateItemDescription(id: Int, description: String) {
@@ -265,12 +273,12 @@ class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
         performQuery(CommandAnalyser.ITEM_REMOVE, mapOf("id" to id))
     }
 
-    private fun updateField(id: Int, command: Int, pair: Pair<String, Any>) {
-        performQuery(command, mapOf("id" to id, pair))
+    private fun updateField(id: Int, command: Int, pair: Pair<String, Any>): Map<String, Any> {
+        return performQuery(command, mapOf("id" to id, pair))
     }
 
 
-    private fun performQuery(command: Int, map: Map<String, Any>) {
+    private fun performQuery(command: Int, map: Map<String, Any>): Map<String, Any> {
         startConnection()
 
         val message = Message(
@@ -281,6 +289,7 @@ class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
 
         val response = client.sendAndReceiveMessage(packet.bytes).toPacket()
         endConnection()
+        return objectMapper.readValue(response.bMsg.message, object : TypeReference<Map<String, Any>>() {})
     }
 
     private fun emptyJsonAsBytes(): ByteArray {

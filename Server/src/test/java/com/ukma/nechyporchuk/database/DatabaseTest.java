@@ -222,7 +222,7 @@ class DatabaseTest {
     void updateItemNameWithExisting(String newName) {
         int itemId = database.readItemId(initialItem.getName());
 
-        assertThrows(RuntimeException.class, () -> database.updateItemName(itemId, newName));
+        assertFalse(database.updateItemName(itemId, newName));
     }
 
     @ParameterizedTest

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
-import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -16,7 +15,6 @@ import com.adeo.kviewmodel.compose.observeAsState
 import com.ukma.nechyporchuk.core.entities.Group
 import displays.group.groups.GroupDisplayViewModel
 import displays.group.groups.models.GroupEvent
-import displays.item.items.models.ItemsEvent
 
 
 @Composable

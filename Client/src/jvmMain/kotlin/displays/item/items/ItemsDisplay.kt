@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -15,15 +14,17 @@ import androidx.compose.ui.unit.dp
 import com.adeo.kviewmodel.compose.observeAsState
 import com.ukma.nechyporchuk.core.entities.Group
 import com.ukma.nechyporchuk.core.entities.Item
-import displays.item.items.models.ItemsState
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
+import compose.icons.feathericons.Settings
+import displays.item.items.models.ItemEditEvent
 import displays.item.items.models.ItemsEvent
 
 @Composable
 fun ItemsDisplay(
     group: Group,
     onItemClicked: (item: Item) -> Unit,
+    onChangeGroup: () -> Unit,
     onBackClicked: () -> Unit
 ) {
     val viewModel = remember { ItemsDisplayViewModel(group) }
@@ -38,6 +39,13 @@ fun ItemsDisplay(
                         imageVector = FeatherIcons.ArrowLeft,
                         contentDescription = "",
                         modifier = Modifier.clickable { onBackClicked() }
+                    )
+                },
+                actions = {
+                    Icon(
+                        imageVector = FeatherIcons.Settings,
+                        contentDescription = "",
+                        modifier = Modifier.clickable { onChangeGroup() }
                     )
                 }
             )

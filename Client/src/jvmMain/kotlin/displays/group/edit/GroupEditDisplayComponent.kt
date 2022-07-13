@@ -1,27 +1,20 @@
-package displays.item.items
+package displays.group.edit
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.ukma.nechyporchuk.core.entities.Group
-import com.ukma.nechyporchuk.core.entities.Item
 import navigation.Component
 
-class ItemsDisplayComponent(
+class GroupEditDisplayComponent(
     private val componentContext: ComponentContext,
     private val group: Group,
-    private val onItemClicked: (item: Item) -> Unit,
-    private val onChangeGroup: () -> Unit,
     private val onBackClicked: () -> Unit
 ) : Component, ComponentContext by componentContext {
-//    private var state by mutableSetOf("")
 
     @Composable
     override fun render() {
-        ItemsDisplay(
+        GroupEditDisplay(
             group = group,
-            onItemClicked = onItemClicked,
-            onChangeGroup = onChangeGroup,
             onBackClicked = onBackClicked
         )
     }

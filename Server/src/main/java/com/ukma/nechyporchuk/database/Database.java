@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Database {
     private Connection con;
-//    private final String databasePath = "Server/src/main/resources/";
+    //    private final String databasePath = "Server/src/main/resources/";
     private final String databasePath = "src/main/resources/";
     private final String databaseName;
 
@@ -124,7 +124,7 @@ public class Database {
         return readUser(login) != null;
     }
 
-    public void createGroup(String name, String description) {
+    public boolean createGroup(String name, String description) {
         try {
             PreparedStatement statement = con.prepareStatement("insert into groups(name, description) values (?,?)");
             statement.setString(1, name);
@@ -133,9 +133,11 @@ public class Database {
             int result = statement.executeUpdate();
 
             statement.close();
+            return true;
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -275,8 +277,8 @@ public class Database {
         return readItem(id).getName();
     }
 
-    public void updateGroupName(int id, String name) {
-        updateString(
+    public boolean updateGroupName(int id, String name) {
+        return updateString(
                 "update groups set name=(?) where id=(?)",
                 id,
                 name
@@ -291,8 +293,8 @@ public class Database {
         );
     }
 
-    public void updateItemName(int id, String name) {
-        updateString(
+    public boolean updateItemName(int id, String name) {
+        return updateString(
                 "update items set name=(?) where id=(?)",
                 id,
                 name
@@ -537,7 +539,7 @@ public class Database {
         return resultItem;
     }
 
-    private void updateString(String query, int id, String string) {
+    private boolean updateString(String query, int id, String string) {
         try {
             PreparedStatement statement = con.prepareStatement(query);
             statement.setString(1, string);
@@ -546,11 +548,13 @@ public class Database {
             statement.executeUpdate();
 
             statement.close();
+            return true;
         } catch (SQLiteException e) {
-            throw new RuntimeException(e);
+            return false;
         } catch (SQLException e) {
             System.out.println("Не вірний SQL запит на вставку");
             e.printStackTrace();
+            return false;
         }
     }
 
