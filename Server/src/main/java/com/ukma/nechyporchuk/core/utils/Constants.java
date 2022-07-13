@@ -12,7 +12,7 @@ public class Constants {
     public static final int TCP_PORT = 6666;
     public static final int UDP_PORT = 1337;
 
-    public static final int MAX_PACKET_LENGTH = 512;
+    public static final int MAX_PACKET_LENGTH = 1024;
 
     public static final int WAITING_TIME_MILLISECONDS = 4000;
     public static long bPktIdForTesting = 0;

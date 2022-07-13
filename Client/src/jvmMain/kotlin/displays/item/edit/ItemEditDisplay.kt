@@ -14,6 +14,9 @@ import androidx.compose.ui.window.Dialog
 import com.ukma.nechyporchuk.core.entities.Item
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
+import displays.common.ChangeDialog
+import displays.common.Field
+import displays.common.ValidationTextField
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -101,7 +104,7 @@ fun ItemFields(
         Field(
             modifier = Modifier.clickable {
                 showDialog.value = true
-                dialogText.value = item.description
+                dialogText.value = "Description: ${item.description}"
 
                 dialogAction.value = { newDescription ->
                     viewModel.viewModelScope.launch(Dispatchers.Main) {
@@ -111,7 +114,7 @@ fun ItemFields(
                     }
                 }
 
-            }, text = item.description, style = MaterialTheme.typography.h5
+            }, text = "Description: ${item.description}", style = MaterialTheme.typography.h5
         )
         Field(
             modifier = Modifier.clickable {
@@ -174,71 +177,3 @@ fun ItemFields(
         )
     }
 }
-
-@Composable
-fun Field(
-    modifier: Modifier = Modifier,
-    text: String,
-    style: androidx.compose.ui.text.TextStyle
-) {
-    Text(
-        text = text,
-        textAlign = TextAlign.Center,
-        modifier = modifier.fillMaxWidth(),
-        style = style
-    )
-}
-
-@Composable
-fun ChangeDialog(
-    text: String,
-    isError: Boolean,
-    isErrorMessage: String,
-    onChangeClick: (String) -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        val textFieldText = remember { mutableStateOf("") }
-
-        Field(text = text, style = MaterialTheme.typography.h6)
-
-        ValidationTextField(
-            isError = isError,
-            isErrorMessage = isErrorMessage,
-            textValue = textFieldText.value,
-            onValueChanged = { newText -> textFieldText.value = newText }
-        )
-
-        Button(
-            onClick = { onChangeClick(textFieldText.value) }
-        ) {
-            Text(text = "Change", style = MaterialTheme.typography.button)
-        }
-    }
-}
-
-@Composable
-fun ValidationTextField(
-    isError: Boolean,
-    isErrorMessage: String,
-    textValue: String,
-    onValueChanged: (String) -> Unit
-) {
-    OutlinedTextField(
-        value = textValue,
-        isError = isError,
-        onValueChange = onValueChanged
-    )
-    if (isError) {
-        Text(
-            text = isErrorMessage,
-            color = MaterialTheme.colors.error,
-            style = MaterialTheme.typography.caption,
-            modifier = Modifier.padding(start = 16.dp)
-        )
-    }
-}
-

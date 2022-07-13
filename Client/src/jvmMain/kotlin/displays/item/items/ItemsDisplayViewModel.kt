@@ -6,6 +6,7 @@ import com.ukma.nechyporchuk.core.entities.Group
 import displays.item.items.models.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import utils.Facade
 
 class ItemsDisplayViewModel(group: Group) :
@@ -19,6 +20,12 @@ class ItemsDisplayViewModel(group: Group) :
 
     override fun obtainEvent(viewEvent: ItemsEvent) {
         if (viewEvent == ItemsEvent.ItemsDisplay) loadItems()
+    }
+
+    suspend fun createItem(name: String, groupId: Int): Boolean {
+        return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
+            Facade.getInstance().createItem(name, "", 0, 0.0, "", groupId)
+        }
     }
 
     private fun loadItems() {

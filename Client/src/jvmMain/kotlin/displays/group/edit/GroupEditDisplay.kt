@@ -13,8 +13,8 @@ import androidx.compose.ui.window.Dialog
 import com.ukma.nechyporchuk.core.entities.Group
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
-import displays.item.edit.ChangeDialog
-import displays.item.edit.Field
+import displays.common.ChangeDialog
+import displays.common.Field
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -61,10 +61,12 @@ fun GroupFields(
     val isErrorMessage = remember { mutableStateOf("") }
 
     if (showDialog.value)
-        Dialog(onCloseRequest = {
-            showDialog.value = false
-            isError.value = false
-        }) {
+        Dialog(
+            onCloseRequest = {
+                showDialog.value = false
+                isError.value = false
+            }
+        ) {
             ChangeDialog(
                 text = dialogText.value,
                 isError = isError.value,
@@ -102,7 +104,7 @@ fun GroupFields(
         Field(
             modifier = Modifier.clickable {
                 showDialog.value = true
-                dialogText.value = group.description
+                dialogText.value = "Description: ${group.description}"
 
                 dialogAction.value = { newDescription ->
                     viewModel.viewModelScope.launch(Dispatchers.Main) {
@@ -112,7 +114,7 @@ fun GroupFields(
                     }
                 }
 
-            }, text = group.description, style = MaterialTheme.typography.h5
+            }, text = "Description: ${group.description}", style = MaterialTheme.typography.h5
         )
     }
 }
