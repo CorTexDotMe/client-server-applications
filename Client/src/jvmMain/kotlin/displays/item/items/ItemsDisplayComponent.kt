@@ -1,6 +1,5 @@
 package displays.item.items
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.ukma.nechyporchuk.core.entities.Group

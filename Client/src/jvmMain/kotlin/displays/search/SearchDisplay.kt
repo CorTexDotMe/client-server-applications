@@ -14,17 +14,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
-import com.adeo.kviewmodel.compose.observeAsState
 import com.ukma.nechyporchuk.core.entities.Item
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
-import compose.icons.feathericons.Search
-import compose.icons.feathericons.Settings
 import displays.common.ItemButton
-import displays.item.items.Items
-import displays.item.items.models.ItemsEvent
 import displays.search.models.SearchEvent
 
 @Composable

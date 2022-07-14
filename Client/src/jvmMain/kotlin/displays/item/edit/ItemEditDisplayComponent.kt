@@ -2,7 +2,6 @@ package displays.item.edit
 
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
-import com.ukma.nechyporchuk.core.entities.Group
 import com.ukma.nechyporchuk.core.entities.Item
 import navigation.Component
 

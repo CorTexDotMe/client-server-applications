@@ -2,7 +2,6 @@ package com.ukma.nechyporchuk.core.entities;
 
 import com.arkivanov.essenty.parcelable.Parcelable;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 public class Group implements Parcelable {

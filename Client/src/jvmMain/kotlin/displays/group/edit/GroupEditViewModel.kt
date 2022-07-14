@@ -3,10 +3,9 @@ package displays.group.edit
 import androidx.compose.runtime.mutableStateOf
 import com.adeo.kviewmodel.BaseSharedViewModel
 import com.ukma.nechyporchuk.core.entities.Group
-import com.ukma.nechyporchuk.core.entities.Item
 import displays.item.items.models.GroupEditAction
-import displays.item.items.models.ItemEditEvent
 import displays.item.items.models.GroupEditState
+import displays.item.items.models.ItemEditEvent
 import kotlinx.coroutines.*
 import utils.Facade
 

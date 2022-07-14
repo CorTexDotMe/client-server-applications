@@ -1,14 +1,12 @@
 package com.ukma.nechyporchuk.network.interfaces;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ukma.nechyporchuk.core.entities.Message;
 import com.ukma.nechyporchuk.core.entities.Packet;
 import com.ukma.nechyporchuk.core.utils.Constants;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public interface Receiver {
