@@ -1,11 +1,13 @@
 package displays.common
 
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ukma.nechyporchuk.core.entities.Item
 
 @Composable
 fun Field(
@@ -146,5 +149,38 @@ fun CreateButton(
             fontSize = 26.sp,
             style = MaterialTheme.typography.button
         )
+    }
+}
+
+@Composable
+fun ItemButton(
+    item: Item,
+    onItemClicked: (item: Item) -> Unit
+) {
+    Button(
+        onClick = { onItemClicked(item) },
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.primaryVariant
+        ),
+        modifier = Modifier
+    ) {
+        Column {
+            Text(
+                text = item.name,
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colors.onSecondary,
+                style = MaterialTheme.typography.h6
+            )
+            Divider(
+                color = MaterialTheme.colors.onPrimary, thickness = 3.dp,
+                modifier = Modifier.padding(top = 8.dp, bottom = 20.dp)
+            )
+            Text(
+                text = item.additionalInfo(),
+                modifier = Modifier.fillMaxWidth(),
+                color = MaterialTheme.colors.onSecondary,
+                style = MaterialTheme.typography.body2
+            )
+        }
     }
 }

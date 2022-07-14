@@ -8,7 +8,8 @@ import navigation.Component
 
 class GroupDisplayComponent(
     private val componentContext: ComponentContext,
-    private val onGroupClicked: (group: Group) -> Unit
+    private val onGroupClicked: (group: Group) -> Unit,
+    private val onSearchClicked: () -> Unit
 ) : Component, ComponentContext by componentContext {
 //    private var state by mutableSetOf("")
 
@@ -16,6 +17,7 @@ class GroupDisplayComponent(
     override fun render() {
         GroupDisplay(
             onGroupClicked = onGroupClicked,
+            onSearchClicked = onSearchClicked
         )
     }
 

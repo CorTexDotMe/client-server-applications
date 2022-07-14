@@ -33,11 +33,18 @@ class NavHostComponent(
                 componentContext = componentContext,
                 onGroupClicked = { group ->
                     router.push(ScreenConfig.ItemsDisplay(group))
+                },
+                onSearchClicked = {
+                    router.push(ScreenConfig.Search)
                 }
             )
 
             is ScreenConfig.Search -> SearchDisplayComponent(
-                componentContext = componentContext
+                componentContext = componentContext,
+                onItemClicked = { item ->
+                    router.push(ScreenConfig.ItemEdit(item))
+                },
+                onBackClicked = router::pop
             )
 
             is ScreenConfig.ItemsDisplay -> ItemsDisplayComponent(

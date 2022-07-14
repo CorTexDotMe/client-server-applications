@@ -25,6 +25,7 @@ import compose.icons.feathericons.ArrowLeft
 import compose.icons.feathericons.Settings
 import displays.common.CreateButton
 import displays.common.CreateDialog
+import displays.common.ItemButton
 import displays.group.groups.models.GroupEvent
 import displays.item.items.models.ItemEditEvent
 import displays.item.items.models.ItemsEvent
@@ -142,32 +143,10 @@ fun Items(
                     )
             }
             items(items) { item ->
-                Button(
-                    onClick = { onItemClicked(item) },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.primaryVariant
-                    ),
-                    modifier = Modifier
-                ) {
-                    Column {
-                        Text(
-                            text = item.name,
-                            modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colors.onSecondary,
-                            style = MaterialTheme.typography.h6
-                        )
-                        Divider(
-                            color = MaterialTheme.colors.onPrimary, thickness = 3.dp,
-                            modifier = Modifier.padding(top = 8.dp,bottom = 20.dp)
-                        )
-                        Text(
-                            text = item.additionalInfo(),
-                            modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colors.onSecondary,
-                            style = MaterialTheme.typography.body2
-                        )
-                    }
-                }
+                ItemButton(
+                    item = item,
+                    onItemClicked = onItemClicked
+                )
             }
             item {
                 Spacer(modifier = Modifier.height(60.dp))

@@ -1,21 +1,22 @@
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.adeo.kviewmodel.compose.observeAsState
 import com.ukma.nechyporchuk.core.entities.Group
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.Search
 import displays.common.CreateButton
 import displays.common.CreateDialog
 import displays.group.groups.GroupDisplayViewModel
@@ -26,7 +27,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun GroupDisplay(
-    onGroupClicked: (group: Group) -> Unit
+    onGroupClicked: (group: Group) -> Unit,
+    onSearchClicked: () -> Unit
 ) {
     val viewModel = remember { GroupDisplayViewModel() }
     val state = viewModel.viewStates().observeAsState()
@@ -34,7 +36,8 @@ fun GroupDisplay(
     Groups(
         groups = state.value.groups.value,
         viewModel = viewModel,
-        onGroupClicked = onGroupClicked
+        onGroupClicked = onGroupClicked,
+        onSearchClicked = onSearchClicked
     )
 
     LaunchedEffect(key1 = true) {
@@ -46,7 +49,8 @@ fun GroupDisplay(
 fun Groups(
     groups: List<Group>,
     viewModel: GroupDisplayViewModel,
-    onGroupClicked: (group: Group) -> Unit
+    onGroupClicked: (group: Group) -> Unit,
+    onSearchClicked: () -> Unit
 ) {
     val showDialog = remember { mutableStateOf(false) }
     val isError = remember { mutableStateOf(false) }
@@ -89,12 +93,22 @@ fun Groups(
             state = state
         ) {
             item {
-                Text(
-                    text = "Storage",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.h2
-                )
+                Box {
+                    Text(
+                        text = "Storage",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.h2
+                    )
+                    Icon(
+                        imageVector = FeatherIcons.Search,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .scale(1.5f)
+                            .clickable { onSearchClicked() }
+                    )
+                }
             }
             items(groups) { group ->
                 Button(
