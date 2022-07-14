@@ -6,10 +6,14 @@ import com.ukma.nechyporchuk.core.entities.Group;
 import com.ukma.nechyporchuk.core.entities.Item;
 import com.ukma.nechyporchuk.core.entities.Message;
 import com.ukma.nechyporchuk.core.utils.CommandAnalyser;
+import com.ukma.nechyporchuk.core.utils.Constants;
 import com.ukma.nechyporchuk.database.Database;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Processor that can create response based on different types of commands.
@@ -17,10 +21,12 @@ import java.util.Map;
  */
 public class Processor {
 
+    private final static BlockingQueue<Pair> amountToAdd = new LinkedBlockingQueue<>();
     private static final Database database = new Database("Shop database");
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static int bUserId = 1;
     private static byte bSrc = 1;
+    private static boolean notStartedAddingThread = true;
 
     public Message process(Message message) {
         byte[] response;
@@ -101,10 +107,14 @@ public class Processor {
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_SET_DESCRIPTION"));
                     break;
 
-                case CommandAnalyser.ITEM_SET_AMOUNT:
-                    database.updateItemAmount((int) map.get("id"), (int) map.get("amount"));
+                case CommandAnalyser.ITEM_ADD_AMOUNT:
+                    amountToAdd.put(new Pair(((int) map.get("id")), ((int) map.get("amount"))));
+                    if (notStartedAddingThread) {
+                        notStartedAddingThread = false;
+                        startAddingThread();
+                    }
 
-                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_SET_AMOUNT"));
+                    response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_ADD_AMOUNT"));
                     break;
 
                 case CommandAnalyser.ITEM_SET_COST:
@@ -156,5 +166,52 @@ public class Processor {
             response = new byte[0];
         }
         return new Message(message.getCType(), message.getBUserId(), response);
+    }
+
+    private void startAddingThread() {
+        new Thread(() -> {
+            while (true) {
+                Pair amountAndItemId = poll();
+                Item item = database.readItem(amountAndItemId.id);
+                int result = item.getAmount() + amountAndItemId.amount;
+
+//                if (result < 0)
+//                    result = 0;
+                database.updateItemAmount(item.getId(), result);
+            }
+        }).start();
+    }
+
+    private Pair poll() {
+        try {
+            Pair result = null;
+            while (result == null)
+                result = amountToAdd.poll(Constants.POLL_TIMEOUT, TimeUnit.MILLISECONDS);
+            return result;
+        } catch (InterruptedException e) {
+            return poll();
+        }
+    }
+
+    private static class Pair {
+        private int id;
+        private int amount;
+
+        public Pair(int id, int amount) {
+            this.id = id;
+            this.amount = amount;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public int getAmount() {
+            return amount;
+        }
+
+        public void setAmount(int amount) {
+            this.amount = amount;
+        }
     }
 }

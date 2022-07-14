@@ -249,8 +249,8 @@ class Facade(useTCP: Boolean = false, val reconnectInfinitely: Boolean = true) {
         updateField(id, CommandAnalyser.ITEM_SET_DESCRIPTION, "description" to description)
     }
 
-    fun updateAmount(id: Int, amount: Int) {
-        updateField(id, CommandAnalyser.ITEM_SET_AMOUNT, "amount" to amount)
+    fun addAmount(id: Int, amount: Int) {
+        updateField(id, CommandAnalyser.ITEM_ADD_AMOUNT, "amount" to amount)
     }
 
     fun updateCost(id: Int, cost: Double) {

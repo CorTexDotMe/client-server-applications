@@ -38,7 +38,7 @@ public class CommandAnalyser {
             ITEM_CREATE = ITEM ^ CREATE,
             ITEM_SET_NAME = ITEM ^ SET_NAME,
             ITEM_SET_DESCRIPTION = ITEM ^ SET_DESCRIPTION,
-            ITEM_SET_AMOUNT = ITEM ^ SET_AMOUNT,
+            ITEM_ADD_AMOUNT = ITEM ^ SET_AMOUNT,
             ITEM_SET_COST = ITEM ^ SET_COST,
             ITEM_SET_PRODUCER = ITEM ^ SET_PRODUCER,
             ITEM_SET_GROUP = ITEM ^ SET_GROUP;

@@ -1,8 +1,11 @@
 import com.ukma.nechyporchuk.core.entities.Group
 import com.ukma.nechyporchuk.core.entities.Item
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import utils.Facade
 
 internal class FacadeTest {
@@ -112,10 +115,40 @@ internal class FacadeTest {
 
     @Test
     fun testUpdateItemAmount() {
-        val newAmount = 264221
-        facade.updateAmount(initItem1.id, newAmount)
+        //Add 100
+        var previousAmount = initItem1.amount
+        var addAmount = 100
+        facade.addAmount(initItem1.id, addAmount)
 
-        assertEquals(newAmount, facade.getItem(initItem1.id)!!.amount)
+        var updatedItem = facade.getItem(initItem1.id)!!
+        assertEquals(addAmount + previousAmount, updatedItem.amount)
+        initItem1.amount = updatedItem.amount
+
+        //Add 100
+        previousAmount = initItem1.amount
+        addAmount = 100
+        facade.addAmount(initItem1.id, addAmount)
+
+        updatedItem = facade.getItem(initItem1.id)!!
+        assertEquals(addAmount + previousAmount, updatedItem.amount)
+        initItem1.amount = updatedItem.amount
+
+        //Subtract 100
+        previousAmount = initItem1.amount
+        addAmount = -100
+        facade.addAmount(initItem1.id, addAmount)
+
+        updatedItem = facade.getItem(initItem1.id)!!
+        assertEquals(addAmount + previousAmount, facade.getItem(initItem1.id)!!.amount)
+        initItem1.amount = updatedItem.amount
+
+        //Subtract 10000
+        addAmount = -10000
+        facade.addAmount(initItem1.id, addAmount)
+
+        updatedItem = facade.getItem(initItem1.id)!!
+        assertEquals(0, facade.getItem(initItem1.id)!!.amount)
+        initItem1.amount = updatedItem.amount
     }
 
     @Test

@@ -3,8 +3,12 @@ package displays.item.edit
 import androidx.compose.runtime.mutableStateOf
 import com.adeo.kviewmodel.BaseSharedViewModel
 import com.ukma.nechyporchuk.core.entities.Item
-import displays.item.items.models.*
-import kotlinx.coroutines.*
+import displays.item.items.models.ItemEditAction
+import displays.item.items.models.ItemEditEvent
+import displays.item.items.models.ItemEditState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import utils.Facade
 
 class ItemEditViewModel(item: Item) :
@@ -16,6 +20,7 @@ class ItemEditViewModel(item: Item) :
 //    }
 
     override fun obtainEvent(viewEvent: ItemEditEvent) {
+        if (viewEvent is ItemEditEvent.ItemUpdate) updateItem()
     }
 
     fun deleteItem() {
@@ -36,9 +41,9 @@ class ItemEditViewModel(item: Item) :
         }
     }
 
-    fun changeAmount(amount: Int) {
+    fun addAmount(amount: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            Facade.getInstance().updateAmount(viewState.item.value!!.id, amount)
+            Facade.getInstance().addAmount(viewState.item.value!!.id, amount)
         }
     }
 
@@ -51,6 +56,12 @@ class ItemEditViewModel(item: Item) :
     fun changeProducer(producer: String) {
         viewModelScope.launch(Dispatchers.IO) {
             Facade.getInstance().updateProducer(viewState.item.value!!.id, producer)
+        }
+    }
+
+    private fun updateItem() {
+        viewModelScope.launch(Dispatchers.IO) {
+            viewState.item.value = Facade.getInstance().getItem(viewState.item.value!!.id)
         }
     }
 }

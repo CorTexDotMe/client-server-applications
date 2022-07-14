@@ -1,11 +1,6 @@
 package displays.common
 
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -37,6 +32,7 @@ fun ChangeDialog(
     text: String,
     isError: Boolean,
     isErrorMessage: String,
+    label: String? = null,
     onChangeClick: (String) -> Unit
 ) {
     Column(
@@ -51,6 +47,7 @@ fun ChangeDialog(
         ValidationTextField(
             isError = isError,
             isErrorMessage = isErrorMessage,
+            label = label,
             textValue = textFieldText.value,
             onValueChanged = { newText -> textFieldText.value = newText }
         )
