@@ -18,6 +18,12 @@ class ItemEditViewModel(item: Item) :
     override fun obtainEvent(viewEvent: ItemEditEvent) {
     }
 
+    fun deleteItem() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Facade.getInstance().deleteItem(viewState.item.value!!.id)
+        }
+    }
+
     suspend fun changeName(name: String): Boolean {
         return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
             Facade.getInstance().updateItemName(viewState.item.value!!.id, name)

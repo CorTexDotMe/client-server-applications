@@ -8,14 +8,16 @@ import navigation.Component
 class GroupEditDisplayComponent(
     private val componentContext: ComponentContext,
     private val group: Group,
-    private val onBackClicked: () -> Unit
+    private val onBackClicked: () -> Unit,
+    private val onDeleteClicked: () -> Unit
 ) : Component, ComponentContext by componentContext {
 
     @Composable
     override fun render() {
         GroupEditDisplay(
             group = group,
-            onBackClicked = onBackClicked
+            onBackClicked = onBackClicked,
+            onDeleteClicked = onDeleteClicked
         )
     }
 

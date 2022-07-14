@@ -4,9 +4,7 @@ import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.Children
-import com.arkivanov.decompose.router.pop
-import com.arkivanov.decompose.router.push
-import com.arkivanov.decompose.router.router
+import com.arkivanov.decompose.router.*
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.ukma.nechyporchuk.core.entities.Group
 import com.ukma.nechyporchuk.core.entities.Item
@@ -14,6 +12,7 @@ import displays.group.groups.GroupDisplayComponent
 import displays.group.edit.GroupEditDisplayComponent
 import displays.item.edit.ItemEditDisplayComponent
 import displays.item.items.ItemsDisplayComponent
+import displays.search.SearchDisplayComponent
 
 class NavHostComponent(
     componentContext: ComponentContext
@@ -37,6 +36,10 @@ class NavHostComponent(
                 }
             )
 
+            is ScreenConfig.Search -> SearchDisplayComponent(
+                componentContext = componentContext
+            )
+
             is ScreenConfig.ItemsDisplay -> ItemsDisplayComponent(
                 componentContext = componentContext,
                 group = screenConfig.group,
@@ -58,7 +61,13 @@ class NavHostComponent(
             is ScreenConfig.GroupEdit -> GroupEditDisplayComponent(
                 componentContext = componentContext,
                 group = screenConfig.group,
-                onBackClicked = router::pop
+                onBackClicked = router::pop,
+                onDeleteClicked = {
+                    router.popWhile { screenConfig ->
+                        screenConfig !is ScreenConfig.GroupDisplay
+                    }
+//                    router.replaceCurrent(ScreenConfig.GroupDisplay)
+                }
             )
         }
     }
@@ -73,6 +82,7 @@ class NavHostComponent(
 
     private sealed class ScreenConfig : Parcelable {
         object GroupDisplay : ScreenConfig()
+        object Search : ScreenConfig()
         data class GroupEdit(val group: Group) : ScreenConfig()
         data class ItemsDisplay(val group: Group) : ScreenConfig()
         data class ItemEdit(val item: Item) : ScreenConfig()

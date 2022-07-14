@@ -21,6 +21,13 @@ class GroupEditViewModel(group: Group) :
     override fun obtainEvent(viewEvent: ItemEditEvent) {
     }
 
+    fun deleteGroup(): Deferred<Boolean> {
+        return viewModelScope.async(Dispatchers.IO) {
+            Facade.getInstance().deleteGroup(viewState.group.value!!.id)
+            true
+        }
+    }
+
     suspend fun changeName(name: String): Boolean {
         return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
             Facade.getInstance().updateGroupName(viewState.group.value!!.id, name)

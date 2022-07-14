@@ -14,6 +14,8 @@ import androidx.compose.ui.window.Dialog
 import com.ukma.nechyporchuk.core.entities.Item
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
+import compose.icons.feathericons.Settings
+import compose.icons.feathericons.Trash2
 import displays.common.ChangeDialog
 import displays.common.Field
 import displays.common.ValidationTextField
@@ -36,6 +38,19 @@ fun ItemEditDisplay(
                         imageVector = FeatherIcons.ArrowLeft,
                         contentDescription = "",
                         modifier = Modifier.clickable { onBackClicked() }
+                    )
+                },
+                actions = {
+                    Icon(
+                        imageVector = FeatherIcons.Trash2,
+                        contentDescription = "",
+                        modifier = Modifier.clickable {
+                            viewModel.viewModelScope.launch {
+                                viewModel.deleteItem()
+
+                                onBackClicked()
+                            }
+                        }
                     )
                 }
             )

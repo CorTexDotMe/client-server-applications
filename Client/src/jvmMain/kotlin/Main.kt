@@ -47,37 +47,3 @@ fun <T> rememberRootComponent(
         factory(componentContext)
     }
 }
-
-//private fun createStoreRoot(componentContext: ComponentContext): StoreRoot{
-//
-//}
-//
-//@Composable
-//fun RootContent() {
-//    val router = rememberRouter<Screen>(
-//        initialConfiguration = { NavHostComponent.ScreenConfig.GroupDisplay }
-//    )
-//
-//    Children(
-//        routerState = router.state
-//    ) { screen ->
-//        when (screenConfig) {
-//            is NavHostComponent.ScreenConfig.GroupDisplay -> GroupDisplayComponent(
-//                componentContext = componentContext,
-//                onGroupClicked = { group ->
-//                    router.push(NavHostComponent.ScreenConfig.ItemsDisplay(group))
-//                }
-//            )
-//
-//            is NavHostComponent.ScreenConfig.ItemsDisplay -> ItemsDisplayComponent(
-//                componentContext = componentContext,
-//                onItemClicked = { item ->
-//
-//                }
-//            )
-//            when (val configuration = screen.configuration) {
-//                is Screen.List -> List(onItemClick = { router.push(Screen.Details(text = it)) })
-//                is Screen.Details -> Details(text = configuration.text, onBack = router::pop)
-//            }
-//        }
-//    }
