@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Shop database" uuid="5758aa9d-f0b9-4d10-9076-078556816aac">
+    <data-source source="LOCAL" name="Shop database" uuid="39a42dcb-4230-423d-bade-c8568dc75fea">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:C:\Workspace\.Projects\Client_Server_Project\Server\src\main\resources\Shop database</jdbc-url>
+      <jdbc-url>jdbc:sqlite:C:\Workspace\.Projects\java-kotlin\stock-manager\server\src\main\resources\Shop database</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>
