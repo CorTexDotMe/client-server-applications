@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class ShopHttpServer {
-    public static final Database DATABASE = new Database("Shop database");
+    public static final Database DATABASE = new Database("main_shop.db");
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {

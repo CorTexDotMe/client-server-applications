@@ -3,6 +3,7 @@ package com.ukma.stockmanager.database;
 import com.ukma.stockmanager.core.entities.Group;
 import com.ukma.stockmanager.core.entities.Item;
 import com.ukma.stockmanager.core.entities.User;
+import com.ukma.stockmanager.core.utils.Constants;
 import org.sqlite.SQLiteException;
 
 import java.io.File;
@@ -12,20 +13,17 @@ import java.util.List;
 
 public class Database {
     private Connection con;
-    //    private final String databasePath = "Server/src/main/resources/";
-    private final String databasePath;
     private final String databaseName;
 
     public Database(String databaseName) {
         this.databaseName = databaseName;
-        this.databasePath = Database.class.getClassLoader().getResource(databaseName).getPath();
         initialization();
     }
 
     private void initialization() {
         try {
             Class.forName("org.sqlite.JDBC");
-            con = DriverManager.getConnection("jdbc:sqlite:" + databasePath);
+            con = DriverManager.getConnection("jdbc:sqlite:" + Constants.DB_PATH + databaseName);
 
             String createGroupsQuery = "create table if not exists 'groups' (" +
                                        "'id' integer primary key AUTOINCREMENT, " +
@@ -453,7 +451,7 @@ public class Database {
 
     public void deleteDatabase() {
         try {
-            File database = new File(databasePath);
+            File database = new File(Constants.DB_PATH + databaseName);
             con.close();
             database.delete();
         } catch (SQLException e) {

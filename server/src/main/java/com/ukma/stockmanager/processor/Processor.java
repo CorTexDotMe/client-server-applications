@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class Processor {
 
     private final static BlockingQueue<Pair> amountToAdd = new LinkedBlockingQueue<>();
-    private static final Database database = new Database("Shop database");
+    private static final Database database = new Database("main_shop.db");
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static int bUserId = 1;
     private static byte bSrc = 1;

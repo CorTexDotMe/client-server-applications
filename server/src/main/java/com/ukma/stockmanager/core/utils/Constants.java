@@ -16,4 +16,6 @@ public class Constants {
 
     public static final int WAITING_TIME_MILLISECONDS = 4000;
     public static long bPktIdForTesting = 0;
+
+    public static final String DB_PATH = "C:\\Workspace\\.Projects\\java-kotlin\\stock-manager\\server\\src\\main\\resources\\";
 }
