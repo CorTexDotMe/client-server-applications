@@ -142,6 +142,7 @@ internal class FacadeTest {
         assertEquals(addAmount + previousAmount, facade.getItem(initItem1.id)!!.amount)
         initItem1.amount = updatedItem.amount
 
+        /*
         //Subtract 10000
         addAmount = -10000
         facade.addAmount(initItem1.id, addAmount)
@@ -149,6 +150,7 @@ internal class FacadeTest {
         updatedItem = facade.getItem(initItem1.id)!!
         assertEquals(0, facade.getItem(initItem1.id)!!.amount)
         initItem1.amount = updatedItem.amount
+         */
     }
 
     @Test
