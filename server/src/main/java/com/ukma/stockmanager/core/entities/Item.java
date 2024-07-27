@@ -3,7 +3,7 @@ package com.ukma.stockmanager.core.entities;
 import java.util.Objects;
 
 public class Item {
-    private int id;
+    private Integer id;
     private String name;
     private String description;
     private int amount;
@@ -21,7 +21,7 @@ public class Item {
         this.groupId = 0;
     }
 
-    public Item(int id, String name, String description, int amount, double cost, String producer, int groupId) {
+    public Item(Integer id, String name, String description, int amount, double cost, String producer, int groupId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -31,7 +31,7 @@ public class Item {
         this.groupId = groupId;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -63,7 +63,7 @@ public class Item {
         this.groupId = groupId;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
