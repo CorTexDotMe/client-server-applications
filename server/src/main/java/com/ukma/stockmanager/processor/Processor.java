@@ -7,7 +7,9 @@ import com.ukma.stockmanager.core.entities.Item;
 import com.ukma.stockmanager.core.entities.Message;
 import com.ukma.stockmanager.core.utils.CommandAnalyser;
 import com.ukma.stockmanager.core.utils.Constants;
-import com.ukma.stockmanager.database.Database;
+import com.ukma.stockmanager.database.DAO;
+import com.ukma.stockmanager.database.GroupDAO;
+import com.ukma.stockmanager.database.ItemDAO;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,8 @@ import java.util.concurrent.TimeUnit;
 public class Processor {
 
     private final static BlockingQueue<Pair> amountToAdd = new LinkedBlockingQueue<>();
-    private static final Database database = new Database("main_shop.db");
+    private static final ItemDAO ITEM_DAO = new ItemDAO("main_shop.db");
+    private static final GroupDAO GROUP_DAO = new GroupDAO("main_shop.db");
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static int bUserId = 1;
     private static byte bSrc = 1;
@@ -36,14 +39,14 @@ public class Processor {
 
             switch (message.getCType()) {
                 case CommandAnalyser.ITEM_GET:
-                    Item item = database.readItem((int) map.get("id"));
+                    Item item = ITEM_DAO.readItem((int) map.get("id"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(item);
                     break;
 
                 case CommandAnalyser.ITEM_GET_BY_GROUP:
                     boolean asc = map.get("asc") == null || (boolean) map.get("asc");
-                    List<Item> itemsByGroup = database.listItemsByGroupInOrder(
+                    List<Item> itemsByGroup = ITEM_DAO.listItemsByGroupInOrder(
                             (int) map.get("id"),
                             asc
                     );
@@ -52,31 +55,31 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.ITEM_GET_ALL:
-                    response = OBJECT_MAPPER.writeValueAsBytes(database.readAllItems());
+                    response = OBJECT_MAPPER.writeValueAsBytes(ITEM_DAO.readAllItems());
                     break;
 
                 case CommandAnalyser.GROUP_GET:
-                    Group group = database.readGroup((int) map.get("id"));
+                    Group group = GROUP_DAO.readGroup((int) map.get("id"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(group);
                     break;
 
                 case CommandAnalyser.GROUP_GET_ALL:
-                    response = OBJECT_MAPPER.writeValueAsBytes(database.readAllGroups());
+                    response = OBJECT_MAPPER.writeValueAsBytes(GROUP_DAO.readAll());
                     break;
 
                 case CommandAnalyser.ITEM_REMOVE:
-                    database.deleteItem((int) map.get("id"));
+                    ITEM_DAO.deleteItem((int) map.get("id"));
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "OK_ITEM_REMOVE"));
                     break;
 
                 case CommandAnalyser.GROUP_REMOVE:
-                    database.deleteGroup((int) map.get("id"));
+                    GROUP_DAO.deleteGroup((int) map.get("id"));
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "OK_GROUP_REMOVE"));
                     break;
 
                 case CommandAnalyser.ITEM_CREATE:
-                    boolean itemCreated = database.createItem(
+                    boolean itemCreated = ITEM_DAO.createItem(
                             (String) map.get("name"),
                             (String) map.get("description"),
                             (int) map.get("amount"),
@@ -88,21 +91,23 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.GROUP_CREATE:
-                    boolean groupCreated = database.createGroup(
+                    Group createdGroup = new Group(
+                            null,
                             (String) map.get("name"),
                             (String) map.get("description")
                     );
+                    boolean groupCreated = GROUP_DAO.create(createdGroup);
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", groupCreated));
                     break;
 
                 case CommandAnalyser.ITEM_SET_NAME:
-                    boolean itemNameChanged = database.updateItemName((int) map.get("id"), (String) map.get("name"));
+                    boolean itemNameChanged = ITEM_DAO.updateItemName((int) map.get("id"), (String) map.get("name"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", itemNameChanged));
                     break;
 
                 case CommandAnalyser.ITEM_SET_DESCRIPTION:
-                    database.updateItemDescription((int) map.get("id"), (String) map.get("description"));
+                    ITEM_DAO.updateItemDescription((int) map.get("id"), (String) map.get("description"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_SET_DESCRIPTION"));
                     break;
@@ -118,31 +123,31 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.ITEM_SET_COST:
-                    database.updateItemCost((int) map.get("id"), (double) map.get("cost"));
+                    ITEM_DAO.updateItemCost((int) map.get("id"), (double) map.get("cost"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_SET_COST"));
                     break;
 
                 case CommandAnalyser.ITEM_SET_PRODUCER:
-                    database.updateItemProducer((int) map.get("id"), (String) map.get("producer"));
+                    ITEM_DAO.updateItemProducer((int) map.get("id"), (String) map.get("producer"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_SET_PRODUCER"));
                     break;
 
                 case CommandAnalyser.ITEM_SET_GROUP:
-                    database.updateItemGroup((int) map.get("id"), (int) map.get("groupId"));
+                    ITEM_DAO.updateItemGroup((int) map.get("id"), (int) map.get("groupId"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_SET_GROUP"));
                     break;
 
                 case CommandAnalyser.GROUP_SET_NAME:
-                    boolean groupNameChanged = database.updateGroupName((int) map.get("id"), (String) map.get("name"));
+                    boolean groupNameChanged = GROUP_DAO.updateGroupName((int) map.get("id"), (String) map.get("name"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", groupNameChanged));
                     break;
 
                 case CommandAnalyser.GROUP_SET_DESCRIPTION:
-                    database.updateGroupDescription((int) map.get("id"), (String) map.get("description"));
+                    GROUP_DAO.updateGroupDescription((int) map.get("id"), (String) map.get("description"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "GROUP_SET_DESCRIPTION"));
                     break;
@@ -172,12 +177,12 @@ public class Processor {
         new Thread(() -> {
             while (true) {
                 Pair amountAndItemId = poll();
-                Item item = database.readItem(amountAndItemId.id);
+                Item item = ITEM_DAO.readItem(amountAndItemId.id);
                 int result = item.getAmount() + amountAndItemId.amount;
 
 //                if (result < 0)
 //                    result = 0;
-                database.updateItemAmount(item.getId(), result);
+                ITEM_DAO.updateItemAmount(item.getId(), result);
             }
         }).start();
     }
