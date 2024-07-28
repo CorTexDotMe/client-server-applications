@@ -22,14 +22,11 @@ import java.util.concurrent.TimeUnit;
  * Types are determined in CommandAnalyser
  */
 public class Processor {
-
-    private final static BlockingQueue<Pair> amountToAdd = new LinkedBlockingQueue<>();
     private static final ItemDAO ITEM_DAO = new ItemDAO("main_shop.db");
     private static final GroupDAO GROUP_DAO = new GroupDAO("main_shop.db");
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static int bUserId = 1;
     private static byte bSrc = 1;
-    private static boolean notStartedAddingThread = true;
 
     public Message process(Message message) {
         byte[] response;
@@ -113,11 +110,7 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.ITEM_ADD_AMOUNT:
-                    amountToAdd.put(new Pair(((int) map.get("id")), ((int) map.get("amount"))));
-                    if (notStartedAddingThread) {
-                        notStartedAddingThread = false;
-                        startAddingThread();
-                    }
+                    ITEM_DAO.addItemAmount((int) map.get("id"), (int) map.get("amount"));
 
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", "ITEM_ADD_AMOUNT"));
                     break;
@@ -171,52 +164,5 @@ public class Processor {
             response = new byte[0];
         }
         return new Message(message.getCType(), message.getBUserId(), response);
-    }
-
-    private void startAddingThread() {
-        new Thread(() -> {
-            while (true) {
-                Pair amountAndItemId = poll();
-                Item item = ITEM_DAO.readItem(amountAndItemId.id);
-                int result = item.getAmount() + amountAndItemId.amount;
-
-//                if (result < 0)
-//                    result = 0;
-                ITEM_DAO.updateItemAmount(item.getId(), result);
-            }
-        }).start();
-    }
-
-    private Pair poll() {
-        try {
-            Pair result = null;
-            while (result == null)
-                result = amountToAdd.poll(Constants.POLL_TIMEOUT, TimeUnit.MILLISECONDS);
-            return result;
-        } catch (InterruptedException e) {
-            return poll();
-        }
-    }
-
-    private static class Pair {
-        private int id;
-        private int amount;
-
-        public Pair(int id, int amount) {
-            this.id = id;
-            this.amount = amount;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public int getAmount() {
-            return amount;
-        }
-
-        public void setAmount(int amount) {
-            this.amount = amount;
-        }
     }
 }
