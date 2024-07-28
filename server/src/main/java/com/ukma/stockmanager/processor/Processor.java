@@ -6,16 +6,11 @@ import com.ukma.stockmanager.core.entities.Group;
 import com.ukma.stockmanager.core.entities.Item;
 import com.ukma.stockmanager.core.entities.Message;
 import com.ukma.stockmanager.core.utils.CommandAnalyser;
-import com.ukma.stockmanager.core.utils.Constants;
-import com.ukma.stockmanager.database.DAO;
 import com.ukma.stockmanager.database.GroupDAO;
 import com.ukma.stockmanager.database.ItemDAO;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Processor that can create response based on different types of commands.
@@ -62,7 +57,7 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.GROUP_GET_ALL:
-                    response = OBJECT_MAPPER.writeValueAsBytes(GROUP_DAO.readAll());
+                    response = OBJECT_MAPPER.writeValueAsBytes(GROUP_DAO.readAllGroups());
                     break;
 
                 case CommandAnalyser.ITEM_REMOVE:
@@ -88,12 +83,7 @@ public class Processor {
                     break;
 
                 case CommandAnalyser.GROUP_CREATE:
-                    Group createdGroup = new Group(
-                            null,
-                            (String) map.get("name"),
-                            (String) map.get("description")
-                    );
-                    boolean groupCreated = GROUP_DAO.create(createdGroup);
+                    boolean groupCreated = GROUP_DAO.createGroup((String) map.get("name"), (String) map.get("description"));
                     response = OBJECT_MAPPER.writeValueAsBytes(Map.of("response", groupCreated));
                     break;
 

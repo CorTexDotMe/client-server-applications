@@ -42,10 +42,13 @@ class DaoTest {
 
     @BeforeEach
     void createGroupAndItem() {
-        GROUP_DAO.create(initialGroup);
+        GROUP_DAO.createGroup(initialGroup);
         initialGroup.setId(GROUP_DAO.readGroupId(initialGroup.getName()));
+
         initialItem.setGroupId(initialGroup.getId());
+        initialItem.setId(ITEM_DAO.readItemId(initialItem.getName()));
         existingItem.setGroupId(initialGroup.getId());
+        existingItem.setId(ITEM_DAO.readItemId(existingItem.getName()));
 
         ITEM_DAO.createItem(initialItem);
         ITEM_DAO.createItem(existingItem);
@@ -53,7 +56,7 @@ class DaoTest {
 
     @AfterEach
     void deleteGroupAndItem() {
-        for (Group group : GROUP_DAO.readAll())
+        for (Group group : GROUP_DAO.readAllGroups())
             GROUP_DAO.deleteGroup(group.getId());
         for (Item item : ITEM_DAO.readAllItems())
             ITEM_DAO.deleteItem(item.getId());

@@ -61,6 +61,9 @@ public class DAO {
             int resultGroups = groupsTableStatement.executeUpdate();
             int resultItems = itemsTableStatement.executeUpdate();
             int resultUsers = usersTableStatement.executeUpdate();
+            groupsTableStatement.close();
+            itemsTableStatement.close();
+            usersTableStatement.close();
         } catch (ClassNotFoundException e) {
             System.out.println("No JDBC drivers");
             e.printStackTrace();

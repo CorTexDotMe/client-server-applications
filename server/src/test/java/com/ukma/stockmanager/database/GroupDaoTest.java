@@ -18,7 +18,7 @@ public class GroupDaoTest extends DaoTest {
         Group group = GROUP_DAO.readGroup(newGroup.getName());
         assertNull(group);
 
-        GROUP_DAO.create(newGroup);
+        GROUP_DAO.createGroup(newGroup);
         group = GROUP_DAO.readGroup(newGroup.getName());
         assertEquals(group, newGroup);
     }
@@ -35,12 +35,12 @@ public class GroupDaoTest extends DaoTest {
         realAllGroups.add(second);
         realAllGroups.add(third);
         realAllGroups.add(forth);
-        GROUP_DAO.create(first);
-        GROUP_DAO.create(second);
-        GROUP_DAO.create(third);
-        GROUP_DAO.create(forth);
+        GROUP_DAO.createGroup(first);
+        GROUP_DAO.createGroup(second);
+        GROUP_DAO.createGroup(third);
+        GROUP_DAO.createGroup(forth);
 
-        assertEquals(realAllGroups, GROUP_DAO.readAll());
+        assertEquals(realAllGroups, GROUP_DAO.readAllGroups());
     }
 
     @Test
@@ -50,14 +50,14 @@ public class GroupDaoTest extends DaoTest {
 
     @Test
     void readGroupById() {
-        Group inDatabase = GROUP_DAO.readAll().get(0);
+        Group inDatabase = GROUP_DAO.readAllGroups().get(0);
         int id = inDatabase.getId();
         assertEquals(initialGroup, GROUP_DAO.readGroup(id));
     }
 
     @Test
     void readGroupId() {
-        Group inDatabase = GROUP_DAO.readAll().get(0);
+        Group inDatabase = GROUP_DAO.readAllGroups().get(0);
         assertEquals(inDatabase.getId(), GROUP_DAO.readGroupId(initialGroup.getName()));
     }
 

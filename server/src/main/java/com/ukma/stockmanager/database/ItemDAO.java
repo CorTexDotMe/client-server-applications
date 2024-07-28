@@ -5,7 +5,6 @@ import com.ukma.stockmanager.core.entities.Item;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,10 +36,6 @@ public class ItemDAO extends DAO {
         }
     }
 
-    public boolean createItem(String name, String description, int amount, double cost, String producer, String group) {
-        return createItem(name, description, amount, cost, producer, readGroupId(group));
-    }
-
     public boolean createItem(Item item) {
         return createItem(item.getName(), item.getDescription(), item.getAmount(),
                 item.getCost(), item.getProducer(), item.getGroupId());
@@ -51,7 +46,9 @@ public class ItemDAO extends DAO {
             PreparedStatement statement = con.prepareStatement("SELECT * FROM items");
             ResultSet results = statement.executeQuery();
 
-            return getItems(results);
+            List<Item> resultList = getItems(results);
+            statement.close();
+            return resultList;
         } catch (SQLException e) {
             System.out.println("Incorrect SQL SELECT statement");
             e.printStackTrace();
@@ -86,11 +83,21 @@ public class ItemDAO extends DAO {
     }
 
     public int readItemId(String name) {
-        return readItem(name).getId();
-    }
+        try {
+            PreparedStatement statement = con.prepareStatement("SELECT id FROM items WHERE name=(?)");
+            statement.setString(1, name);
 
-    public String readItemName(int id) {
-        return readItem(id).getName();
+            ResultSet result = statement.executeQuery();
+            int itemId = result.getInt("id");
+
+            result.close();
+            statement.close();
+            return itemId;
+        } catch (SQLException e) {
+            System.out.println("Incorrect SQL SELECT statement");
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public boolean updateItemName(int id, String name) {
@@ -176,14 +183,6 @@ public class ItemDAO extends DAO {
             System.out.println("Incorrect SQL UPDATE statement");
             e.printStackTrace();
         }
-    }
-
-    public void updateItemGroup(int id, String group) {
-        int groupId = readGroupId(group);
-        if (groupId == -1)
-            throw new IllegalArgumentException("No such group with name: " + group);
-
-        updateItemGroup(id, groupId);
     }
 
     public boolean deleteItem(int id) {
@@ -272,7 +271,7 @@ public class ItemDAO extends DAO {
         ResultSet results = statement.executeQuery();
         Item resultItem = null;
 
-        if(results.next()) {
+        if (results.next()) {
             resultItem = new Item(
                     results.getInt("id"),
                     results.getString("name"),
@@ -302,24 +301,6 @@ public class ItemDAO extends DAO {
             System.out.println("Incorrect SQL SELECT statement");
             e.printStackTrace();
             return new LinkedList<>();
-        }
-    }
-
-    private int readGroupId(String name) {
-        try {
-            PreparedStatement statement = con.prepareStatement("SELECT id FROM groups WHERE name=(?)");
-            statement.setString(1, name);
-
-            ResultSet result = statement.executeQuery();
-            int groupId = result.getInt("id");
-
-            result.close();
-            statement.close();
-            return groupId;
-        } catch (SQLException e) {
-            System.out.println("Incorrect SQL SELECT statement");
-            e.printStackTrace();
-            return 0;
         }
     }
 }

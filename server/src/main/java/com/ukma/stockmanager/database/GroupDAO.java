@@ -1,7 +1,6 @@
 package com.ukma.stockmanager.database;
 
 import com.ukma.stockmanager.core.entities.Group;
-import com.ukma.stockmanager.core.entities.Item;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,13 +15,13 @@ public class GroupDAO extends DAO {
         super(databaseName);
     }
 
-    public boolean create(Group group) {
+    public boolean createGroup(String name, String description) {
         try {
             PreparedStatement statement = con.prepareStatement(
                     "INSERT INTO groups(name, description) VALUES (?,?)"
             );
-            statement.setString(1, group.getName());
-            statement.setString(2, group.getDescription());
+            statement.setString(1, name);
+            statement.setString(2, description);
 
             int result = statement.executeUpdate();
             statement.close();
@@ -34,7 +33,12 @@ public class GroupDAO extends DAO {
         }
     }
 
-    public List<Group> readAll() {
+    public boolean createGroup(Group group) {
+        return createGroup(group.getName(), group.getDescription());
+    }
+
+
+    public List<Group> readAllGroups() {
         try {
             PreparedStatement statement = con.prepareStatement("SELECT * FROM groups");
             ResultSet results = statement.executeQuery();
@@ -137,7 +141,7 @@ public class GroupDAO extends DAO {
         ResultSet results = statement.executeQuery();
         Group resultGroup = null;
 
-        if(results.next()) {
+        if (results.next()) {
             resultGroup = new Group(
                     results.getInt("id"),
                     results.getString("name"),

@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserDAO extends DAO{
+public class UserDAO extends DAO {
 
     public UserDAO(String databaseName) {
         super(databaseName);

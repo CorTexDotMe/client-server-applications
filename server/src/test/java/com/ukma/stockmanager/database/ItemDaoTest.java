@@ -13,37 +13,28 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ItemDaoTest extends DaoTest {
 
     @Test
     void createItem() {
         Item newItem = new Item(
-                0,
+                null,
                 "Unique name",
                 "description",
                 10,
                 10.0,
                 "Hello",
-                GROUP_DAO.readGroupId(initialGroup.getName()));
+                initialGroup.getId()
+        );
         Item item = ITEM_DAO.readItem(newItem.getName());
         assertNull(item);
 
-        ITEM_DAO.createItem(
-                newItem.getName(),
-                newItem.getDescription(),
-                newItem.getAmount(),
-                newItem.getCost(),
-                newItem.getProducer(),
-                newItem.getGroupId()
-        );
+        ITEM_DAO.createItem(newItem);
         item = ITEM_DAO.readItem(newItem.getName());
         assertEquals(item, newItem);
     }
-
 
 
     @Test
@@ -57,54 +48,39 @@ public class ItemDaoTest extends DaoTest {
     @Test
     void readItemId() {
         Item inDatabase = ITEM_DAO.readAllItems().get(0);
-        assertEquals(inDatabase.getId(), ITEM_DAO.readItemId(initialItem.getName()));
-    }
-
-    @Test
-    void readItemName() {
-        Item inDatabase = ITEM_DAO.readAllItems().get(0);
-        assertEquals(initialItem.getName(), ITEM_DAO.readItemName(inDatabase.getId()));
+        assertEquals(inDatabase.getId(), initialItem.getId());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"initialNote", "", "New name", ")($U@Y!$@!$DD"})
     void updateItemName(String newName) {
-        int itemId = ITEM_DAO.readItemId(initialItem.getName());
-
-        ITEM_DAO.updateItemName(itemId, newName);
-        assertEquals(newName, ITEM_DAO.readItem(itemId).getName());
+        ITEM_DAO.updateItemName(initialItem.getId(), newName);
+        assertEquals(newName, ITEM_DAO.readItem(initialItem.getId()).getName());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"ExistingNote"})
     void updateItemNameWithExisting(String newName) {
-        int itemId = ITEM_DAO.readItemId(initialItem.getName());
-
-        assertFalse(ITEM_DAO.updateItemName(itemId, newName));
+        assertFalse(ITEM_DAO.updateItemName(initialItem.getId(), newName));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"", "New name", ")($U@Y!$@!$DD"})
     void updateItemDescription(String newDescription) {
-        int itemId = ITEM_DAO.readItemId(initialItem.getName());
-
-        ITEM_DAO.updateItemDescription(itemId, newDescription);
-        assertEquals(newDescription, ITEM_DAO.readItem(itemId).getDescription());
+        ITEM_DAO.updateItemDescription(initialItem.getId(), newDescription);
+        assertEquals(newDescription, ITEM_DAO.readItem(initialItem.getId()).getDescription());
     }
 
     @ParameterizedTest
     @ValueSource(ints = {0, 100, 1000, -100, 0})
     void updateItemAmount(int newAmount) {
-        int itemId = ITEM_DAO.readItemId(initialItem.getName());
-
-        ITEM_DAO.updateItemAmount(itemId, newAmount);
-        assertEquals(newAmount, ITEM_DAO.readItem(itemId).getAmount());
+        ITEM_DAO.updateItemAmount(initialItem.getId(), newAmount);
+        assertEquals(newAmount, ITEM_DAO.readItem(initialItem.getId()).getAmount());
     }
 
     @Test
     void updateItemAmountConcurrently() throws InterruptedException {
         int numThreads = 10;
-        int itemId = ITEM_DAO.readItemId(initialItem.getName());
         int initialAmount = initialItem.getAmount();
         int amountToAdd = 5;
 
@@ -113,7 +89,7 @@ public class ItemDaoTest extends DaoTest {
         var a = new ArrayList<String>();
         for (int i = 0; i < numThreads; i++) {
             executorService.submit(() -> {
-                ITEM_DAO.addItemAmount(itemId, amountToAdd);
+                ITEM_DAO.addItemAmount(initialItem.getId(), amountToAdd);
             });
         }
 
@@ -123,33 +99,32 @@ public class ItemDaoTest extends DaoTest {
 
         // Verify the final amount
         int expectedFinalAmount = initialAmount + (numThreads * amountToAdd);
-        assertEquals(expectedFinalAmount, ITEM_DAO.readItem(itemId).getAmount());
+        assertEquals(expectedFinalAmount, ITEM_DAO.readItem(initialItem.getId()).getAmount());
     }
 
     @ParameterizedTest
     @ValueSource(doubles = {0.0, 100.0123, 1000.999999, -100, 0.000000001})
     void updateItemCost(double newCost) {
-        int itemId = ITEM_DAO.readItemId(initialItem.getName());
-
-        ITEM_DAO.updateItemCost(itemId, newCost);
-        assertEquals(newCost, ITEM_DAO.readItem(itemId).getCost());
+        ITEM_DAO.updateItemCost(initialItem.getId(), newCost);
+        assertEquals(newCost, ITEM_DAO.readItem(initialItem.getId()).getCost());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"", "New name", ")($U@Y!$@!$DD"})
     void updateItemProducer(String newProducer) {
-        int itemId = ITEM_DAO.readItemId(initialItem.getName());
-
-        ITEM_DAO.updateItemProducer(itemId, newProducer);
-        assertEquals(newProducer, ITEM_DAO.readItem(itemId).getProducer());
+        ITEM_DAO.updateItemProducer(initialItem.getId(), newProducer);
+        assertEquals(newProducer, ITEM_DAO.readItem(initialItem.getId()).getProducer());
     }
 
     @Test
     void updateItemGroup() {
-        int itemId = ITEM_DAO.readItemId(initialItem.getName());
+        Group group = new Group(null, "GroupToUpdateItemGroupId", "");
+        GROUP_DAO.createGroup(group);
+        int groupId = GROUP_DAO.readGroupId(group.getName());
 
-        ITEM_DAO.updateItemGroup(itemId, initialGroup.getName());
-        assertEquals(GROUP_DAO.readGroupId(initialGroup.getName()), ITEM_DAO.readItem(itemId).getGroupId());
+        assertNotEquals(groupId, ITEM_DAO.readItem(initialItem.getId()).getGroupId());
+        ITEM_DAO.updateItemGroup(initialItem.getId(), groupId);
+        assertEquals(groupId, ITEM_DAO.readItem(initialItem.getId()).getGroupId());
     }
 
     @Test
@@ -157,7 +132,7 @@ public class ItemDaoTest extends DaoTest {
         Item item = ITEM_DAO.readItem(initialItem.getName());
         assertEquals(item, initialItem);
 
-        ITEM_DAO.deleteItem(ITEM_DAO.readItemId(initialItem.getName()));
+        ITEM_DAO.deleteItem(initialItem.getId());
 
         item = ITEM_DAO.readItem(initialItem.getName());
         assertNull(item);
@@ -189,8 +164,8 @@ public class ItemDaoTest extends DaoTest {
     @Test
     void orderByGroup() {
         Group group = new Group(null, "", "");
-        GROUP_DAO.create(group);
-        Item item = new Item(0, "test", "", 0, 0, "", GROUP_DAO.readGroupId(group.getName()));
+        GROUP_DAO.createGroup(group);
+        Item item = new Item(null, "test", "", 0, 0, "", GROUP_DAO.readGroupId(group.getName()));
         ITEM_DAO.createItem(item.getName(), item.getDescription(), item.getAmount(), item.getCost(), item.getProducer(), item.getGroupId());
 
         int groupId = GROUP_DAO.readGroupId(initialGroup.getName());
