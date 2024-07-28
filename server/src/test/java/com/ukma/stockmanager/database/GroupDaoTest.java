@@ -7,8 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.LinkedList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GroupDaoTest extends DaoTest {
 
@@ -82,11 +81,15 @@ public class GroupDaoTest extends DaoTest {
     @Test
     void deleteGroup() {
         Group group = GROUP_DAO.readGroup(initialGroup.getName());
+        int groupId = group.getId();
         assertEquals(group, initialGroup);
 
-        GROUP_DAO.deleteGroup(GROUP_DAO.readGroupId(initialGroup.getName()));
+        assertFalse(ITEM_DAO.listItemsByGroup(groupId).isEmpty());
 
+        GROUP_DAO.deleteGroup(GROUP_DAO.readGroupId(initialGroup.getName()));
         group = GROUP_DAO.readGroup(initialGroup.getName());
         assertNull(group);
+
+        assertTrue(ITEM_DAO.listItemsByGroup(groupId).isEmpty());
     }
 }

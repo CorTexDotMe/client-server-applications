@@ -127,10 +127,15 @@ public class GroupDAO extends DAO {
 
     public void deleteGroup(int id) {
         try {
-            PreparedStatement statement = con.prepareStatement("DELETE FROM groups WHERE id=(?)");
-            statement.setInt(1, id);
-            statement.executeUpdate();
-            statement.close();
+            PreparedStatement deleteGroupStatement = con.prepareStatement("DELETE FROM groups WHERE id=(?)");
+            deleteGroupStatement.setInt(1, id);
+            deleteGroupStatement.executeUpdate();
+            deleteGroupStatement.close();
+
+            PreparedStatement deletItemsStatement = con.prepareStatement("DELETE FROM items WHERE group_id=(?)");
+            deletItemsStatement.setInt(1, id);
+            deletItemsStatement.executeUpdate();
+            deletItemsStatement.close();
         } catch (SQLException e) {
             System.out.println("Incorrect SQL DELETE statement");
             e.printStackTrace();
