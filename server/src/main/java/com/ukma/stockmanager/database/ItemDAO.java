@@ -82,13 +82,16 @@ public class ItemDAO extends DAO {
         }
     }
 
-    public int readItemId(String name) {
+    public Integer readItemId(String name) {
         try {
             PreparedStatement statement = con.prepareStatement("SELECT id FROM items WHERE name=(?)");
             statement.setString(1, name);
 
+            Integer itemId = null;
             ResultSet result = statement.executeQuery();
-            int itemId = result.getInt("id");
+            if (result.next()) {
+                itemId = result.getInt("id");
+            }
 
             result.close();
             statement.close();

@@ -1,16 +1,14 @@
 package com.ukma.stockmanager.database;
 
-import com.ukma.stockmanager.core.entities.Group;
-import com.ukma.stockmanager.core.entities.Item;
-import com.ukma.stockmanager.core.entities.User;
 import com.ukma.stockmanager.core.utils.Constants;
 import org.sqlite.SQLiteException;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 public class DAO {
     protected Connection con;
