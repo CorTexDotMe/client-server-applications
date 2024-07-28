@@ -63,14 +63,9 @@ class UDPTest {
 
         for (int i = 0; i < 100; i++)
             threadPool.execute(test::test1);
-//            new Thread(() -> {
-//                test.test1();
-//            }).start();
-
-//        threadPool.shutdown();
         try {
             threadPool.awaitTermination(2L, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -83,14 +78,9 @@ class UDPTest {
 
         for (int i = 0; i < 100; i++)
             threadPool.execute(test::test2);
-//            new Thread(() -> {
-//                test.test2();
-//            }).start();
-
-//        threadPool.shutdown();
         try {
             threadPool.awaitTermination(2L, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 

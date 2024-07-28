@@ -23,10 +23,6 @@ class PacketCipherTest {
         byte[] originalData = "123456789qwerty".getBytes();
         byte[] encryptedData = Encryptor.encrypt(originalData);
         assertArrayEquals(originalData, Decryptor.decrypt(encryptedData));
-
-//        byte[] originalData = Receiver.getRandomPacket();
-//        byte[] another = new Packet(originalData).getPacket();
-//        assertArrayEquals(originalData, another);
     }
 
     @Test

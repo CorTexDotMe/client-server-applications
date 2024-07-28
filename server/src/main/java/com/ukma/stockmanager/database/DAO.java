@@ -101,18 +101,4 @@ public class DAO {
             return false;
         }
     }
-
-    public static void main(String[] args) {
-        DAO sqlTest = new DAO("main_shop.db");
-
-//        for (Group group : sqlTest.readAllGroups())
-//            System.out.println(group);
-
-//        System.out.println();
-
-//        for (Item item : sqlTest.readAllItems())
-//            System.out.println(item);
-    }
-
-
 }

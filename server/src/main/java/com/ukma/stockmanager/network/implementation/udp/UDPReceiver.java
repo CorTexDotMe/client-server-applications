@@ -11,9 +11,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author Danylo Nechyporchuk
- */
 public class UDPReceiver implements com.ukma.stockmanager.network.interfaces.Receiver {
 
     public final static BlockingQueue<byte[]> receivedPackets = new LinkedBlockingQueue<>();

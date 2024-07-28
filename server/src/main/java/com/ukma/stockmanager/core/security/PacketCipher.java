@@ -47,7 +47,6 @@ public class PacketCipher {
 
             //Create cipher
             cipher = Cipher.getInstance("AES/GCM/NoPadding");
-//            cipher = Cipher.getInstance("AES");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,7 +115,6 @@ public class PacketCipher {
             byte[] iv = new byte[12];
             secureRandom.nextBytes(iv);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, new GCMParameterSpec(keyLength, iv));
-//            cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
             byte[] encryptedData = cipher.doFinal(data);
 
@@ -147,7 +145,6 @@ public class PacketCipher {
             buffer.get(encryptedData);
 
             cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(keyLength, iv));
-//            cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return cipher.doFinal(encryptedData);
         } catch (Exception e) {
             e.printStackTrace();
