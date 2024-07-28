@@ -3,9 +3,6 @@ package com.ukma.stockmanager.network.implementation.tcp;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-/**
- * Print packet message in console instead of sending packet.
- */
 public class TCPSender implements com.ukma.stockmanager.network.interfaces.Sender {
     private final DataOutputStream out;
 

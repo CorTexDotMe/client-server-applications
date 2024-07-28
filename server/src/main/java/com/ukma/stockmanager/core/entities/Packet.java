@@ -8,18 +8,18 @@ import com.ukma.stockmanager.core.utils.Constants;
 import java.nio.ByteBuffer;
 
 /**
- * Уявимо, що ви розробляєте клієнт серверне застосування, що має обмінюватися повідомленнями по мережі.
- * Ваші дані містять комерційну таємницю і не можуть передаватися в відкритому вигляді.
- * Тому ви маєте розробити протокол обміну повідомленнями. Таким чином структура нашого пакету:
+ * A client-server application that needs to exchange messages over a network
+ * Messages need to be encrypted. To ensure security a messaging protocol was developed.
+ * This a structure of our packet
  * <p>
  * Offset	Length	Mnemonic	Notes
- * 00	    1	    bMagic	    Байт, що вказує на початок пакету - значення 13h (h - значить hex)
- * 01	    1	    bSrc	    Унікальний номер клієнтського застосування
- * 02	    8	    bPktId	    Номер повідомлення. Номер постійно збільшується. В форматі big-endian
- * 10	    4	    wLen	    Довжина пакету даних big-endian
+ * 00	    1	    bMagic	    Byte indicating the beginning of the packet - value 13h (h means hex)
+ * 01	    1	    bSrc	    Unique number of the client application
+ * 02	    8	    bPktId	    The number of the message. The number is constantly increasing. In big-endian format
+ * 10	    4	    wLen	    Big-endian data packet length
  * 14	    2	    wCrc16	    CRC16 байтів (00-13) big-endian
- * 16	    wLen	bMsq	    Message - корисне повідомлення
- * 16+wLen	2	    wCrc16	    CRC16 байтів (16 до 16+wLen-1) big-endian
+ * 16	    wLen	bMsq	    Message - useful information
+ * 16+wLen	2	    wCrc16	    CRC16 bytes (16 to 16+wLen-1) big-endian
  *
  * @author Danylo Nechyporchuk
  */

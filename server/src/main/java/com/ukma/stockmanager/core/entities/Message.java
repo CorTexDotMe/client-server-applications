@@ -3,12 +3,12 @@ package com.ukma.stockmanager.core.entities;
 import java.nio.ByteBuffer;
 
 /**
- * Структура повідомлення (message):
+ * Message structure:
  * Offset	Length	Mnemonic 	Notes
- * 00	    4	    cType	    Код команди big-endian
- * 04	    4	    bUserId	    Від кого надіслане повідомлення. В системі може бути багато клієнтів.
- * А на кожному з цих клієнтів може працювати один з багатьох працівників. big-endian
- * 08	    wLen-8	message	    корисна інформація, можна покласти JSON як масив байтів big-endian
+ * 00	    4	    cType	    Big-endian command code
+ * 04	    4	    bUserId	    From whom the message was sent. There can be many clients in the system.
+ *                              And one of many employees can work for each of these clients. big-endian
+ * 08	    wLen-8	message	    Useful information, you can put JSON as an array of big-endian bytes
  *
  * @author Danylo Nechyporchuk
  */
