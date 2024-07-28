@@ -6,6 +6,7 @@ import com.ukma.stockmanager.core.entities.Group;
 import com.ukma.stockmanager.core.entities.Item;
 import com.ukma.stockmanager.core.entities.Message;
 import com.ukma.stockmanager.core.utils.CommandAnalyser;
+import com.ukma.stockmanager.core.utils.Constants;
 import com.ukma.stockmanager.database.GroupDAO;
 import com.ukma.stockmanager.database.ItemDAO;
 
@@ -17,8 +18,8 @@ import java.util.Map;
  * Types are determined in CommandAnalyser
  */
 public class Processor {
-    private static final ItemDAO ITEM_DAO = new ItemDAO("main_shop.db");
-    private static final GroupDAO GROUP_DAO = new GroupDAO("main_shop.db");
+    private static final ItemDAO ITEM_DAO = new ItemDAO(Constants.DB_NAME);
+    private static final GroupDAO GROUP_DAO = new GroupDAO(Constants.DB_NAME);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static int bUserId = 1;
     private static byte bSrc = 1;

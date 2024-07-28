@@ -18,4 +18,5 @@ public class Constants {
     public static long bPktIdForTesting = 0;
 
     public static final String DB_PATH = "C:\\Workspace\\.Projects\\java-kotlin\\stock-manager\\server\\src\\main\\resources\\";
+    public static final String DB_NAME = "main_shop.db";
 }
